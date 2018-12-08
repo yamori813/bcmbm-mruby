@@ -1,6 +1,6 @@
 begin
 
-rtl = RTL8196C.new(1)
+rtl = YABM.new(1)
 
 addr = 10 << 24 | 0 << 16 | 1 << 8 | 140
 mask = 255 << 24 | 255 << 16 | 255 << 8 | 0
