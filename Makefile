@@ -64,7 +64,7 @@ bear.o : bear.c
 image :
 	$(CROSS)-objcopy -O binary main.elf main.bin
 	gzip -f --best main.bin
-	./asustrx -o main.trx main.bin.gz
+	tools/asustrx -o main.trx main.bin.gz
 
 clean:
 	rm -rf main.elf $(OBJS) hoge.c
