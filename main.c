@@ -13,6 +13,8 @@
 extern char _end[];
 extern char _fbss[];
 
+extern char version[];
+
 void put(unsigned char c)
 {
 	volatile char* lsr = (volatile char*)0xb8000305; // Line status register.
@@ -65,6 +67,8 @@ long clk;
 	init_by_array(init, length);
 
 	xfunc_out=put;
+
+	print(version);
 
 	clk = sb_cpu_clock();
 	cfe_timer_init(clk);

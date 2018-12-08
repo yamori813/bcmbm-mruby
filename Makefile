@@ -30,6 +30,7 @@ OBJS = start.o main.o syscalls.o
 OBJS += bcm_timer.o bcm_ether.o bcm_gpio.o
 OBJS += xprintf.o mt19937ar.o
 OBJS += net.o bear.o
+OBJS += ver.o
 
 #RBSCRIPT = hoge.rb
 #RBSCRIPT = test/udp.rb
@@ -37,6 +38,8 @@ RBSCRIPT = test/http.rb
 #RBSCRIPT = test/simplehttp.rb
 
 main.elf : $(OBJS) $(CFE_OBJS)
+	./ver.sh
+	$(CROSS)-cc $(CROSS_CFLAGS) -c ver.c
 	$(CROSS)-ld $(CROSS_LDFLAGS) -T main.ld -o main.elf $(OBJS) $(CROSS_LIBS)
 
 start.o : start.S
