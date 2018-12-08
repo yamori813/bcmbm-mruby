@@ -1,13 +1,19 @@
+/*
+ * Copyright (c) 2018 Hiroki Mori. All rights reserved.
+ */
+
 #include <mruby.h>
 #include <mruby/string.h>
 #include <mruby/irep.h>
 
 #include "hoge.c"
 
+#include "xprintf.h"
+
 extern char _end[];
 extern char _fbss[];
 
-void put(char c)
+void put(unsigned char c)
 {
 	volatile char* lsr = (volatile char*)0xb8000305; // Line status register.
 	volatile char* thr = (volatile char*)0xb8000300; // Transmitter holding register.
@@ -28,15 +34,46 @@ mrb_value myputs(mrb_state *mrb, mrb_value self){
         put('\n');
         return mrb_nil_value();
 }
+
+void print(char *ptr)
+{
+	while(*ptr) {
+		put(*ptr);
+		++ptr;
+	}
+}
+
+void sb_chip_reset(void);
+void cfe_timer_init(unsigned int cpu_speed);
+long sb_cpu_clock(void);
+void cfe_attach_init(void);
+void cfe_irq_init(void);
+void mactest(void);
+void cfe_setup_exceptions(void);
  
 int main(void)
 {
 long *lptr;
+long clk;
 
         /* bss clear */
         for (lptr = (long *)_fbss; lptr < (long *)_end; ++lptr) {
                  *lptr = 0;
         }
+
+	unsigned long init[4]={0x123, 0x234, 0x345, 0x456}, length=4;
+	init_by_array(init, length);
+
+	xfunc_out=put;
+
+	clk = sb_cpu_clock();
+	cfe_timer_init(clk);
+	cfe_setup_exceptions();
+	cfe_irq_init();
+
+//	net_init();
+	timer_init();
+
         mrb_state *mrb;
         mrb = mrb_open();
         mrb_define_method(mrb, mrb->object_class,"myputs", myputs,
@@ -44,5 +81,19 @@ long *lptr;
         mrb_load_irep( mrb, bytecode);
         mrb_close(mrb);
 
+//	sb_chip_reset();
+
 	return 0;
+}
+
+int sr;
+
+cli()
+{
+	sr = cfe_irq_disable();
+}
+
+sti()
+{
+	cfe_irq_enable(sr);
 }

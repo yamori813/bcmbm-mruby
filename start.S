@@ -1,3 +1,5 @@
+# Copyright (c) 2018 Hiroki Mori. All rights reserved.
+
 	.globl  main
 	.globl  _init
 

@@ -41,6 +41,7 @@ char * sbrk (int) __attribute__((weak, alias ("_sbrk")));
 
 /* copy from FreeBSD kernel code */
 
+/*
 int
 strncmp(const char *s1, const char *s2, size_t n)
 {
@@ -56,6 +57,10 @@ strncmp(const char *s1, const char *s2, size_t n)
 	} while (--n != 0);
 	return (0);
 }
-
 dprintf()
 {}
+*/
+
+gettimeofday()
+{
+}
