@@ -2,8 +2,6 @@
 
 unsigned int alarm;
 
-#define INTERVAL 20000000
-
 unsigned int interval;
 unsigned int starttime;
 static volatile unsigned int jiffies = 0;
@@ -25,7 +23,7 @@ int clk;
 	clk = sb_cpu_clock();
 	xprintf("Clock : %d\n", clk);
 	cfe_timer_init(clk);
-	interval = 0x30000;
+	interval = (clk / 2) / 100;
 
 	cfe_request_irq(5, timer_isr, 0, CFE_IRQ_FLAGS_SHARED, 0);
 	cfe_enable_irq(5);
@@ -51,5 +49,5 @@ delay_ms(int ms)
 unsigned long
 time(unsigned long *t)
 {
-	return 1544224252;
+	return sys_now()/1000 + starttime;
 }
