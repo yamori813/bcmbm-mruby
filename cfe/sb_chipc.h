@@ -160,19 +160,23 @@
 #define K_FT_ATMEL_SERIAL       0x2
 #define K_FT_PARALLEL           0x7
 
-#define S_CORECAP_PL            16                      /* PLLCtlPresent */
-#define M_CORECAP_PL            _DD_MAKEMASK(2,S_CORECAP_PL)
+#define S_CORECAP_PL            15                      /* PLLCtlPresent */
+#define M_CORECAP_PL            _DD_MAKEMASK(3,S_CORECAP_PL)
 #define V_CORECAP_PL(x)         _DD_MAKEVALUE(x,S_CORECAP_PL)
 #define G_CORECAP_PL(x)         _DD_GETVALUE(x,S_CORECAP_PL,M_CORECAP_PL)
 #define K_PLL_NONE              0x0
-#define K_PLL_TYPE1             0x1
-#define K_PLL_TYPE2             0x2
-#define K_PLL_TYPE3             0x3
+#define K_PLL_TYPE1             0x2
+#define K_PLL_TYPE2             0x4
+#define K_PLL_TYPE3             0x6
+#define K_PLL_TYPE4             0x1
+#define K_PLL_TYPE5             0x3
+#define K_PLL_TYPE6             0x5
+#define K_PLL_TYPE7             0x7
 /* Backward compatibility aliases */
 #define K_PL_NONE               0x0
-#define K_PL_4710               0x1
-#define K_PL_4704               0x2
-#define K_PL_5365               0x3
+#define K_PL_4710               0x2
+#define K_PL_4704               0x4
+#define K_PL_5365               0x6
 
 /* CORECTL: Core Control Register (0x008, R/W) */
 

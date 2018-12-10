@@ -82,6 +82,13 @@
 #define PLL_TYPE4       0x00008000
 
 #define CC_CLOCK_BASE   24000000      /* Half the clock freq. */
+#define CC_CLOCK_BASE1  24000000      /* Half the clock freq. */
+#define CC_CLOCK_BASE2  12500000      /* Alternate crystal on some PLLs */
+
+/* Type 6 Clock control magic field values */
+#define CHIPC_T6_MMASK  1             /* bits of interest in m */
+#define CHIPC_T6_M0     120000000     /* sb clock for m = 0 */
+#define CHIPC_T6_M1     100000000     /* sb clock for m = 1 */
 
 /* bcm4710 (N3M) Clock Control magic field values */
 
@@ -126,33 +133,51 @@ factor6(uint32_t x)
 /*
  * Calculate the PLL output frequency given a set of clockcontrol
  * values (CC_CLOCK_BASE assumed fixed).
+ *
+ * modify by refer freebsd sys/dev/bhnd/cores/chipc/pwrctl/bhnd_pwrctl_subr.c
+ * bhnd_pwrctl_clock_rate()
  */
 
 static uint32_t
 sb_clock_rate(uint32_t pll_type, uint32_t n, uint32_t m)
 {
+    uint32_t clk_base;
     uint32_t n1, n2, clock, m1, m2, m3, mc;
 
     n1 = G_CCN_N1(n);
     n2 = G_CCN_N2(n);
 
-    if (pll_type == PLL_N3M) {
+    switch (pll_type) {
+    case K_PLL_TYPE1:
+    case K_PLL_TYPE3:
+    case K_PLL_TYPE4:
+    case K_PLL_TYPE7:
 	n1 = factor6(n1);
 	n2 += CC_F5_BIAS;
-	}
-    else if (pll_type == PLL_N4M) {
+	break;
+    case K_PLL_TYPE2:
 	n1 += CC_T2_BIAS;
 	n2 += CC_T2_BIAS;
-	}
-    else if (pll_type == PLL_TYPE3) {
+	break;
+    case K_PLL_TYPE5:
 	return 100000000;                 /* NB: for SB only */
-	}
-    else {
+    case K_PLL_TYPE6:
+        if (m & CHIPC_T6_MMASK)
+          return (CHIPC_T6_M1);
+        else
+          return (CHIPC_T6_M0);
+    default:
         ASSERT(0);
 	return 0;
 	}
 
-    clock = CC_CLOCK_BASE * n1 * n2;
+
+    if (pll_type == K_PLL_TYPE3 || pll_type == K_PLL_TYPE7) {
+      clk_base = CC_CLOCK_BASE2;
+    } else {
+      clk_base = CC_CLOCK_BASE1;
+    }
+    clock = clk_base * n1 * n2;
 
     if (clock == 0)
 	return 0;
@@ -162,9 +187,17 @@ sb_clock_rate(uint32_t pll_type, uint32_t n, uint32_t m)
     m3 = G_CCM_M3(m);
     mc = G_CCM_MC(m);
 
-    if (pll_type == PLL_N3M) {
+    switch (pll_type) {
+    case K_PLL_TYPE1:
+    case K_PLL_TYPE3:
+    case K_PLL_TYPE4:
+    case K_PLL_TYPE7:
+
 	m1 = factor6(m1);
-	m2 += CC_F5_BIAS;
+        if (pll_type == K_PLL_TYPE1 || pll_type == K_PLL_TYPE3)
+	  m2 += CC_F5_BIAS;
+        else
+	  m2 = factor6(m2);
 	m3 = factor6(m3);
 
 	switch (mc) {
@@ -175,8 +208,7 @@ sb_clock_rate(uint32_t pll_type, uint32_t n, uint32_t m)
 	    case CC_MC_M1M3:	return clock / (m1 * m3);
 	    default:		return 0;
 	    }
-	}
-    else if (pll_type == PLL_N4M) {
+    case K_PLL_TYPE2:
 	m1 += CC_T2_BIAS;
 	m2 += CC_T2M2_BIAS;
 	m3 += CC_T2_BIAS;
@@ -187,11 +219,10 @@ sb_clock_rate(uint32_t pll_type, uint32_t n, uint32_t m)
 	if ((mc & CC_T2MC_M3BYP) == 0)
 	    clock /= m3;
 	return clock;
-	}
-    else {
+    default:
 	ASSERT(0);
 	return 0;
-	}
+    }
 }
 
 
@@ -360,21 +391,31 @@ uint32_t
 sb_clock(void)
 {
     uint32_t corecap;
-    uint32_t clockcontrol_n, clockcontrol_sb;
+    uint32_t clockcontrol_n, clockcontrol_m;
     uint32_t pll_type;
+    uint32_t rate;
 
     corecap = READCSR(R_CORECAPABILITIES);
-    switch (G_CORECAP_PL(corecap)) {
-	case K_PL_4710:  pll_type = PLL_N3M;  break;
-	case K_PL_4704:  pll_type = PLL_N4M;  break;
-	case K_PL_5365:  pll_type = PLL_TYPE3; break;
-	default:         pll_type = PLL_NONE; break;
-	}
+    pll_type = G_CORECAP_PL(corecap);
     clockcontrol_n = READCSR(R_CLOCKCONTROLN);
-    clockcontrol_sb = READCSR(R_CLOCKCONTROLSB);
+    /* from bhnd_pwrctl_si_clkreg_m() */
+    switch (pll_type) {
+    case K_PLL_TYPE6:
+      clockcontrol_m = READCSR(R_CLOCKCONTROLM3);
+      break;
+    case K_PLL_TYPE3:
+      clockcontrol_m = READCSR(R_CLOCKCONTROLM2);
+      break;
+    default:
+      clockcontrol_m = READCSR(R_CLOCKCONTROLSB);
+      break;
+    }
 
-//    return sb_clock_rate(pll_type, clockcontrol_n, clockcontrol_sb);
-    return 200000000;
+    rate = sb_clock_rate(pll_type, clockcontrol_n, clockcontrol_m);
+    if (pll_type == K_PLL_TYPE3)
+      rate /= 2;
+
+    return (rate);
 }
 
 /* Return the current speed the CPU is running at. */
@@ -386,28 +427,26 @@ sb_cpu_clock(void)
     uint32_t pll_type;
 
     corecap = READCSR(R_CORECAPABILITIES);
+    pll_type = G_CORECAP_PL(corecap);
     clockcontrol_n = READCSR(R_CLOCKCONTROLN);
-    switch (G_CORECAP_PL(corecap)) {
-	case K_PL_4710:
-	    pll_type = PLL_N3M;
-	    clockcontrol_m = READCSR(R_CLOCKCONTROLM0);
-	    break;
-	case K_PL_4704:
-	    pll_type = PLL_N4M;
-	    clockcontrol_m = READCSR(R_CLOCKCONTROLM3);
-	    break;
-	case K_PL_5365:
-	    pll_type = PLL_TYPE3;
-	    return 200000000;     /* until PLL_TYPE3 is documented */
-	    break;
-	default:
-	    pll_type = PLL_NONE;
-	    clockcontrol_m = 0;
-	    break;
-	}
 
-//    return sb_clock_rate(pll_type, clockcontrol_n, clockcontrol_m);
-    return 200000000;
+    /* from bhnd_pwrctl_cpu_clkreg_m() */
+    switch (pll_type) {
+    case K_PLL_TYPE2:
+    case K_PLL_TYPE4:
+    case K_PLL_TYPE6:
+    case K_PLL_TYPE7:
+      clockcontrol_m = READCSR(R_CLOCKCONTROLM3);
+      break;
+    case K_PLL_TYPE5:
+      return 200 * 1000 * 1000;
+    case K_PLL_TYPE3:
+      // Todo BCM5365 check
+      clockcontrol_m = READCSR(R_CLOCKCONTROLM2);
+      break;
+    }
+
+    return sb_clock_rate(pll_type, clockcontrol_n, clockcontrol_m);
 }
 
 
