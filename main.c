@@ -45,9 +45,6 @@ void print(char *ptr)
 	}
 }
 
-void sb_chip_reset(void);
-void cfe_timer_init(unsigned int cpu_speed);
-long sb_cpu_clock(void);
 void cfe_attach_init(void);
 void cfe_irq_init(void);
 void mactest(void);
@@ -70,12 +67,9 @@ long clk;
 
 	print(version);
 
-	clk = sb_cpu_clock();
-	cfe_timer_init(clk);
 	cfe_setup_exceptions();
 	cfe_irq_init();
 
-//	net_init();
 	timer_init();
 
         mrb_state *mrb;

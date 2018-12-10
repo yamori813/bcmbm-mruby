@@ -2,8 +2,9 @@
 
 unsigned int alarm;
 
-#define INTERVAL 0x30000
+#define INTERVAL 20000000
 
+unsigned int interval;
 unsigned int starttime;
 static volatile unsigned int jiffies = 0;
 
@@ -12,16 +13,23 @@ timer_isr(void *arg)
 {
 	net_poll();
 
-	alarm += INTERVAL;
+	alarm += interval;
 	_setalarm(alarm);
 	++jiffies;
 }
 
 timer_init()
 {
+int clk;
+
+	clk = sb_cpu_clock();
+	xprintf("Clock : %d\n", clk);
+	cfe_timer_init(clk);
+	interval = 0x30000;
+
 	cfe_request_irq(5, timer_isr, 0, CFE_IRQ_FLAGS_SHARED, 0);
 	cfe_enable_irq(5);
-	alarm = _getticks() + INTERVAL;
+	alarm = _getticks() + interval;
 	_setalarm(alarm);
 }
 
