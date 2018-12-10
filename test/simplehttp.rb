@@ -2,14 +2,12 @@ begin
 
 yabm = YABM.new(1)
 
-addr = 10 << 24 | 0 << 16 | 1 << 8 | 140
-mask = 255 << 24 | 255 << 16 | 255 << 8 | 0
-gw = 10 << 24 | 0 << 16 | 1 << 8 | 1
-dns = 10 << 24 | 0 << 16 | 1 << 8 | 1
+addr = "10.0.1.140"
+mask = "255.255.255.0"
+gw = "10.0.1.1"
+dns = "10.0.1.1"
 
 yabm.netstart(addr, mask, gw, dns)
-
-dist = 10 << 24 | 0 << 16 | 1 << 8 | 37
 
 yabm.print "Hello Bear Metal mruby on BCM/mips"
 
