@@ -3,7 +3,7 @@
 unsigned int alarm;
 
 unsigned int interval;
-unsigned int starttime;
+unsigned long starttime;
 static volatile unsigned int jiffies = 0;
 
 static void
