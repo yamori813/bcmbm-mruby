@@ -24,11 +24,11 @@ count = 1
 
 while 1 do
 
-  yabm.print "start http " + count.to_s + "\r\n"
+  yabm.print "start https " + count.to_s + "\r\n"
 
-# http://httpbin.org/ip
+# https://httpbin.org/ip
   head = "GET /ip HTTP/1.1\r\nHost: " + host + "\r\n\r\n"
-  res = yabm.http(ip, 80, head)
+  res = yabm.https(host, ip, 443, head)
   yabm.print res
 
   count = count + 1
