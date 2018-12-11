@@ -32,9 +32,13 @@ OBJS += xprintf.o mt19937ar.o
 OBJS += net.o bear.o
 OBJS += ver.o
 
-#RBSCRIPT = hoge.rb
+RBSCRIPT = hoge.rb
 #RBSCRIPT = test/udp.rb
-RBSCRIPT = test/http.rb
+#RBSCRIPT = test/count.rb
+#RBSCRIPT = test/http.rb
+#RBSCRIPT = test/https.rb
+#RBSCRIPT = test/gpio.rb
+#RBSCRIPT = test/led.rb
 #RBSCRIPT = test/simplehttp.rb
 
 main.elf : $(OBJS) $(CFE_OBJS)

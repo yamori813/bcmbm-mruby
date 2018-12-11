@@ -20,7 +20,7 @@ while 1 do
   s = SimpleHttp.new("http", "httpbin.org", 80)
   if s
     res = s.request("GET", "/ip", {'User-Agent' => "test-agent"})
-    yabm.print "GET done\r\n"
+    yabm.print "GET done " + res.status.to_s + "\r\n"
   else
     yabm.print "SimpleHttp error\r\n"
   end
