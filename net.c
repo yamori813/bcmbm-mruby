@@ -250,7 +250,7 @@ void net_startdhcp()
 
 int getmyaddress()
 {
-	return netif.ip_addr.addr;
+	return lwip_htonl(netif.ip_addr.addr);
 }
 
 void
