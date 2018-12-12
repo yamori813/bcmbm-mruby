@@ -1983,7 +1983,11 @@ cfe_output(int buf_length, char *buf_ptr)
 void cfe_ether_init(char *macaddr)
 {
 cfe_driver_t dev;
+uint32_t chipid;
 
-	sb_ether_probe(&dev, 1, 0, macaddr);
-//	sb_ether_probe(&dev, 1, 0, "12:34:56:78:9a:bc");
+    chipid = *(volatile uint32_t *)PHYS_TO_K1(SB_CHIPC_BASE);
+    if ((chipid & 0xfff0) == 0x5350)
+        sb_ether_probe(&dev, 0, 0x1e, macaddr);
+    else
+        sb_ether_probe(&dev, 1, 0, macaddr);
 }
