@@ -50,15 +50,23 @@ void cfe_irq_init(void);
 void mactest(void);
 void cfe_setup_exceptions(void);
  
-int main(void)
+int main(unsigned long handle,unsigned long vector,
+    unsigned long ept,unsigned long seal)
 {
 long *lptr;
 long clk;
+char str[100];
 
         /* bss clear */
+/*
         for (lptr = (long *)_fbss; lptr < (long *)_end; ++lptr) {
                  *lptr = 0;
         }
+*/
+
+	cfe_init(handle,ept);
+
+	nvram_init(0xa0000000 + 0x1C000000 + 0x003F8000, 0x8000);
 
 	unsigned long init[4]={0x123, 0x234, 0x345, 0x456}, length=4;
 	init_by_array(init, length);
@@ -66,6 +74,9 @@ long clk;
 	xfunc_out=put;
 
 	print(version);
+
+	cfe_getenv("BOOT_CONSOLE",str,sizeof(str));
+	xprintf("BOOT_CONSOLE : %s\n", str);
 
 	cfe_setup_exceptions();
 	cfe_irq_init();

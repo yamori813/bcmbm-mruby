@@ -62,6 +62,7 @@ err_t
 ethernetif_init(struct netif *netif)
 {
 struct ethernetif *ethernetif;
+char *macptr;
 
 	ethernetif = mem_malloc(sizeof(struct ethernetif));
 	if (ethernetif == NULL) {
@@ -79,19 +80,18 @@ struct ethernetif *ethernetif;
 	netif->output = etharp_output;
 	netif->linkoutput = low_level_output;
 
+	macptr = nvram_get("et0macaddr");
+	if (macptr == NULL)
+		macptr = "12:34:56:78:9a:bc";
+
 	netif->hwaddr_len = ETHARP_HWADDR_LEN;
-	netif->hwaddr[0] = 0x12;
-	netif->hwaddr[1] = 0x34;
-	netif->hwaddr[2] = 0x56;
-	netif->hwaddr[3] = 0x78;
-	netif->hwaddr[4] = 0x9a;
-	netif->hwaddr[5] = 0xbc;
+	enet_parse_hwaddr(macptr,  netif->hwaddr);
 
 	netif->mtu = 1500;
 	netif->flags = NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP |
 	    NETIF_FLAG_LINK_UP;
 
-	cfe_ether_init("12:34:56:78:9a:bc");
+	cfe_ether_init(macptr);
 
 	return ERR_OK;
 }
