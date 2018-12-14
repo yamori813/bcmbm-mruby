@@ -1,6 +1,8 @@
 #
-# https://wiki.osdev.org/CFE_Bare_Bones
+# bcmbm-mruby Makefile
 #
+
+TOOLCHAIN=../hndtools-mipsel-linux-uclibc-4.2.3
 
 NEWLIBDIR=newlib-3.0.0.20180831
 LWIPDIR=lwip-2.1.2
@@ -10,7 +12,7 @@ CROSS=mips
 
 CROSS_LDFLAGS = -static
 CROSS_LIBS = -L./$(NEWLIBDIR)/mips/newlib
-CROSS_LIBS += -L../hndtools-mipsel-linux-uclibc-4.2.3/lib/gcc/mipsel-linux-uclibc/4.2.3/
+CROSS_LIBS += -L$(TOOLCHAIN)/lib/gcc/mipsel-linux-uclibc/4.2.3/
 CROSS_LIBS += -Lmruby/build/broadcom/lib/
 CROSS_LIBS += -L$(LWIPDIR)/broadcom/
 CROSS_LIBS += -L./$(BARESSLDIR)/build/
