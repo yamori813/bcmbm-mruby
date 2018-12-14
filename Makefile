@@ -34,7 +34,7 @@ OBJS += ver.o
 
 RBSCRIPT = samples/hello.rb
 
-main.bin.gz : $(OBJS) $(CFE_OBJS)
+main.bin.gz : $(OBJS)
 	./ver.sh
 	$(CROSS)-cc $(CROSS_CFLAGS) -c ver.c
 	$(CROSS)-ld $(CROSS_LDFLAGS) -T main.ld -o main.elf $(OBJS) $(CROSS_LIBS)
