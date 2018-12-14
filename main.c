@@ -6,12 +6,7 @@
 #include <mruby/string.h>
 #include <mruby/irep.h>
 
-//#include "hoge.c"
-
 #include "xprintf.h"
-
-extern char _end[];
-extern char _fbss[];
 
 extern char version[];
 
@@ -25,18 +20,6 @@ void put(unsigned char c)
 	*thr = c;
 }
  
-mrb_value myputs(mrb_state *mrb, mrb_value self){
-        char *ptr;
-        mrb_value val;
-        mrb_get_args(mrb, "S", &val);
-        for (ptr = RSTRING_PTR(val); *ptr != '\0'; ++ptr) {
-                put(*ptr);
-        }
-        put('\r');
-        put('\n');
-        return mrb_nil_value();
-}
-
 void print(char *ptr)
 {
 	while(*ptr) {
@@ -45,10 +28,8 @@ void print(char *ptr)
 	}
 }
 
-void cfe_attach_init(void);
-void cfe_irq_init(void);
-void mactest(void);
 void cfe_setup_exceptions(void);
+void cfe_irq_init(void);
  
 int main(unsigned long handle,unsigned long vector,
     unsigned long ept,unsigned long seal)
