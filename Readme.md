@@ -10,3 +10,14 @@ Build tools.
 hndtools-mipsel-linux-uclibc-4.2.3  
 
 I build on FreeBSD/amd64 11.2 used by linux emuration.  
+
+Now only work on BCM4712.  
+
+Todo  
+
+UART support  
+BCM535x support  
+USB Support  
+SPI flash support  
+Switch support  
+etc.  
