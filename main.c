@@ -6,7 +6,7 @@
 #include <mruby/string.h>
 #include <mruby/irep.h>
 
-#include "hoge.c"
+//#include "hoge.c"
 
 #include "xprintf.h"
 
@@ -56,13 +56,12 @@ int main(unsigned long handle,unsigned long vector,
 long *lptr;
 long clk;
 char str[100];
+unsigned char *sizep;
+int vmsize;
+unsigned char *mrbp;
+int mrbsize;
+unsigned char *mrbbuf;
 
-        /* bss clear */
-/*
-        for (lptr = (long *)_fbss; lptr < (long *)_end; ++lptr) {
-                 *lptr = 0;
-        }
-*/
 
 	cfe_init(handle,ept);
 
@@ -83,12 +82,29 @@ char str[100];
 
 	timer_init();
 
-        mrb_state *mrb;
-        mrb = mrb_open();
-        mrb_define_method(mrb, mrb->object_class,"myputs", myputs,
-            MRB_ARGS_REQ(1));
-        mrb_load_irep( mrb, bytecode);
-        mrb_close(mrb);
+	sizep = 0xa0000000 + 0x1C000000 + 0x40000 + 0x14;
+	vmsize = *(sizep + 3) << 24 | *(sizep + 2) << 16 |
+	    *(sizep + 1) << 8 | *sizep;
+	mrbp = 0xa0000000 + 0x1C000000 + 0x40000 + vmsize;
+	if (*(mrbp + 0) == 0x52 && *(mrbp + 1) == 0x49 &&
+	    *(mrbp + 2) == 0x54 && *(mrbp + 3) == 0x45) {
+		mrbsize = *(mrbp + 0xa) << 24 | *(mrbp + 0xb) << 16 |
+		    *(mrbp + 0xc) << 8 | *(mrbp + 0xd);
+		mrbbuf = malloc(mrbsize);
+		memcpy(mrbbuf, mrbp, mrbsize);
+
+		mrb_state *mrb;
+		mrb = mrb_open();
+		mrb_load_irep( mrb, mrbbuf);
+		if (mrb->exc) {
+			mrb_value exc = mrb_obj_value(mrb->exc);
+			mrb_value inspect = mrb_inspect(mrb, exc);
+			print(mrb_str_to_cstr(mrb, inspect));
+		}
+		mrb_close(mrb);
+	} else {
+		print("can't find mrb code on flash?n");
+	}
 
 //	sb_chip_reset();
 

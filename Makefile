@@ -32,30 +32,22 @@ OBJS += xprintf.o mt19937ar.o
 OBJS += net.o bear.o
 OBJS += ver.o
 
-RBSCRIPT = hoge.rb
-#RBSCRIPT = test/count.rb
-#RBSCRIPT = test/udp.rb
-#RBSCRIPT = test/http.rb
-#RBSCRIPT = test/https.rb
-#RBSCRIPT = test/simplehttp.rb
-#RBSCRIPT = test/gpio.rb
-#RBSCRIPT = test/led.rb
+RBSCRIPT = samples/hello.rb
 
-main.elf : $(OBJS) $(CFE_OBJS)
+main.bin.gz : $(OBJS) $(CFE_OBJS)
 	./ver.sh
 	$(CROSS)-cc $(CROSS_CFLAGS) -c ver.c
 	$(CROSS)-ld $(CROSS_LDFLAGS) -T main.ld -o main.elf $(OBJS) $(CROSS_LIBS)
+	$(CROSS)-objcopy -O binary main.elf main.bin
+	gzip -f --best main.bin
 
 start.o : start.S
 	$(CROSS)-as -o start.o start.S
 
-main.o : main.c $(RBSCRIPT)
-	./mruby/build/host/bin/mrbc -Bbytecode -ohoge.c $(RBSCRIPT)
-	$(CROSS)-cc $(CROSS_CFLAGS) -o main.o -c main.c
-
 .c.o:
 	$(CROSS)-cc -O2 $(CROSS_CFLAGS) -c $<
 
+main.o : main.c
 syscalls.o : syscalls.c
 bcm_ether.o : bcm_ether.c
 bcm_gpio.o : bcm_gpio.c
@@ -66,9 +58,8 @@ net.o : net.c
 bear.o : bear.c
 
 image :
-	$(CROSS)-objcopy -O binary main.elf main.bin
-	gzip -f --best main.bin
-	tools/asustrx -o main.trx main.bin.gz
+	./mruby/build/host/bin/mrbc -ohoge.mrb $(RBSCRIPT)
+	tools/asustrx -o main.trx main.bin.gz hoge.mrb
 
 clean:
 	rm -rf main.elf $(OBJS) hoge.c
