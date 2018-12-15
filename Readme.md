@@ -15,9 +15,11 @@ Now only work on BCM4712.
 
 Todo  
 
+flexible memory size  
 UART support  
 BCM535x support  
-USB Support  
 SPI flash support  
 Switch support  
+I2C support  
+USB Support  
 etc.  
