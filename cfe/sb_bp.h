@@ -40,6 +40,8 @@
     *     THE POSSIBILITY OF SUCH DAMAGE.
     ********************************************************************* */
 
+// new hnd code is sbconfig.h
+
 #ifndef _SBBP_H_
 #define _SBBP_H_
 
@@ -85,6 +87,16 @@
 #define K_CR_EXT                0x811
 #define K_CR_MAC11              0x812
 #define K_CR_MIPS33             0x816
+#define K_USB11H                0x817           /* usb 1.1 host core */
+#define K_USB11D                0x818           /* usb 1.1 device core */
+#define K_USB20H                0x819           /* usb 2.0 host core */
+#define K_USB20D                0x81a           /* usb 2.0 device core */
+#define K_SDIOH                 0x81b           /* sdio host core */
+#define K_ROBO                  0x81c           /* roboswitch core */
+#define K_ATA100                0x81d           /* parallel ATA core */
+#define K_SATAXOR               0x81e           /* serial ATA & XOR DMA core */
+#define K_GIGETH                0x81f           /* gigabit ethernet core */
+
 
 
 /* Each core gets a 4K window for registers. */

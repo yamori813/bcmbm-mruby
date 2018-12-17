@@ -68,6 +68,7 @@
 #define BCM5836_REG_PCI		0x18004000 /* PCI core registers */
 #define BCM5836_REG_MIPS33	0x18005000 /* MIPS core registers */
 #define BCM5836_REG_CODEC	0x18006000 /* AC97 Codec Core registers */
+#define BCM5836_REG_ROBOSW	0x18006000 /* Robo Switch Core registers */
 #define BCM5836_REG_IPSEC	0x18007000 /* BCM582x CryptoCore registers */
 #define BCM5836_REG_MEMC	0x18008000 /* MEMC core registers */
 

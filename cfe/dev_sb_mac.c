@@ -944,6 +944,69 @@ mii_interrupt(bcm4401_softc *sc)
     return mii_read(sc, R_INTERRUPT);
 }
 
+#define ROBOSW_ACCESS_CONTROL_REG	0x10
+#define ROBOSW_RW_CONTROL_REG		0x11
+#define ROBOSW_DATA_REG_BASE		0x18
+
+#define ACCESS_CONTROL_RW		0x0001
+#define RW_CONTROL_WRITE		0x0001
+#define RW_CONTROL_READ			0x0002
+
+int
+robosw_r(bcm4401_softc *sc, int page, int addr, int len)
+{
+    mii_write(sc, ROBOSW_ACCESS_CONTROL_REG, (page << 8) | ACCESS_CONTROL_RW);
+    mii_write(sc, ROBOSW_RW_CONTROL_REG, (addr << 8) | RW_CONTROL_READ);
+    while(mii_read(sc, ROBOSW_RW_CONTROL_REG) & 0x0003)
+        ;
+    int res = mii_read(sc, ROBOSW_DATA_REG_BASE);
+    if (len == 4)
+      res |= mii_read(sc, ROBOSW_DATA_REG_BASE+1) << 16;
+xprintf("MORI MORI read %d %d %d %d\n", page, addr, res, len);
+    return res;
+}
+
+void
+robosw_w(bcm4401_softc *sc, int page, int addr, void *val, int len)
+{
+uint16_t val16;
+uint8_t *ptr = (uint8_t *)val;
+
+    mii_write(sc, ROBOSW_ACCESS_CONTROL_REG, (page << 8) | ACCESS_CONTROL_RW);
+    switch (len) {
+    case 1:
+    case 2:
+      val16 = (len == 1) ? *(uint8_t *)val : *(uint16_t *)val;
+      mii_write(sc, ROBOSW_DATA_REG_BASE, val16);
+      break;
+    case 4:
+      val16 = (uint16_t)*(uint32_t *)val;
+      mii_write(sc, ROBOSW_DATA_REG_BASE, val16);
+      val16 = (uint16_t)(*(uint32_t *)val >> 16);
+      mii_write(sc, ROBOSW_DATA_REG_BASE+1, val16);
+      break;
+    case 8:
+      val16 = ptr[7];
+      val16 = ((val16 << 8) | ptr[6]);
+      mii_write(sc, ROBOSW_DATA_REG_BASE+3, val16);
+      /* FALLTHRU */
+    case 6:
+      val16 = ptr[5];
+      val16 = ((val16 << 8) | ptr[4]);
+      mii_write(sc, ROBOSW_DATA_REG_BASE+2, val16);
+      val16 = ptr[3];
+      val16 = ((val16 << 8) | ptr[2]);
+      mii_write(sc, ROBOSW_DATA_REG_BASE+1, val16);
+      val16 = ptr[1];
+      val16 = ((val16 << 8) | ptr[0]);
+      mii_write(sc, ROBOSW_DATA_REG_BASE+0, val16);
+      break;
+    }
+xprintf("MORI MORI write %d %d %x %d\n", page, addr, val16, len);
+    mii_write(sc, ROBOSW_RW_CONTROL_REG, (addr << 8) | RW_CONTROL_WRITE);
+    while(mii_read(sc, ROBOSW_RW_CONTROL_REG) & 0x0003)
+        ;
+}
 
 static void
 mii_autonegotiate(bcm4401_softc *sc)
@@ -960,6 +1023,7 @@ mii_autonegotiate(bcm4401_softc *sc)
 	/* XXX for SOC parts, this address may indicate a Roboswitch. */
 	xprintf("100BaseT FDX (switch)\n");
 	linkspeed = ETHER_SPEED_100FDX;	 
+	robosw_init(sc, sc->hwaddr);
 	}        
     else {
 	/* Read twice to clear latching bits */
