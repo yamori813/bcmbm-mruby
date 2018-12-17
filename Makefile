@@ -36,7 +36,7 @@ OBJS += ver.o
 
 RBSCRIPT = samples/hello.rb
 
-main.bin.gz : $(OBJS)
+main.bin.gz : $(OBJS) cfe/libcfe.a
 	./ver.sh
 	$(CROSS)-cc $(CROSS_CFLAGS) -c ver.c
 	$(CROSS)-ld $(CROSS_LDFLAGS) -T main.ld -o main.elf $(OBJS) $(CROSS_LIBS)
@@ -59,7 +59,7 @@ mt19937ar.o : mt19937ar.c
 net.o : net.c
 bear.o : bear.c
 
-image :
+image : main.bin.gz
 	./mruby/build/host/bin/mrbc -ohoge.mrb $(RBSCRIPT)
 	tools/asustrx -o main.trx main.bin.gz hoge.mrb
 
