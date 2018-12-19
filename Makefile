@@ -49,16 +49,6 @@ start.o : start.S
 .c.o:
 	$(CROSS)-cc -O2 $(CROSS_CFLAGS) -c $<
 
-main.o : main.c
-syscalls.o : syscalls.c
-bcm_ether.o : bcm_ether.c
-bcm_gpio.o : bcm_gpio.c
-bcm_timer.o : bcm_timer.c
-xprintf.o : xprintf.c
-mt19937ar.o : mt19937ar.c
-net.o : net.c
-bear.o : bear.c
-
 image : main.bin.gz
 	./mruby/build/host/bin/mrbc -ohoge.mrb $(RBSCRIPT)
 	tools/asustrx -o main.trx main.bin.gz hoge.mrb

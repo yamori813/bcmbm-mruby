@@ -19,25 +19,5 @@ libcfe.a : $(OBJS)
 .c.o:
 	mips-cc -O2 $(CROSS_CFLAGS) -c $<
 
-exception.o : exception.S
-bcmcore_l1cache.o : bcmcore_l1cache.S
-bcmcore_cpuinit.o : bcmcore_cpuinit.S
-apientry.o : apientry.S
-lib_setjmp.o : lib_setjmp.S
-lib_physio.o : lib_physio.S
-
-exchandler.o : exchandler.c
-bcmcore_irq.o : bcmcore_irq.c
-bcmcore_ircpoll.o : bcmcore_ircpoll.S
-lib_try.o : lib_try.c
-lib_queue.o : lib_queue.c
-dev_sb_mac.o : dev_sb_mac.c
-cfe_timer.o : cfe_timer.c
-sb_utils.o : sb_utils.c
-net_ether.o : net_ether.c
-cfe_api.o : cfe_api.c
-bcmnvram.o : bcmnvram.c
-etc_robo.o : etc_robo.c
-
 clean :
 	rm -rf $(OBJS)
