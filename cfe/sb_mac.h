@@ -41,6 +41,8 @@
 
     ********************************************************************* */
 
+// this code renew by bcmenet47xx.h
+
 #ifndef _SBMAC_H_
 #define _SBMAC_H_
 
