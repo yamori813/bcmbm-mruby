@@ -172,10 +172,6 @@ long *lptr;
 err_t err;
 int i;
 
-//	gethwmac(eth0_mac);
-
-//	swCore_init();
-
 	lwip_init();
 
 	if (use_dhcp)
@@ -185,13 +181,7 @@ int i;
 		netif_add(&netif, &ipaddr, &netmask, &gw, NULL, ethernetif_init,
  		    ethernet_input);
 
-//	vlan_init();
-
 	netif_set_link_up(&netif);
-
-//	lptr = (unsigned long *)IRR1;
-//	*lptr |= (3 << 0);
-//	request_IRQ(8, &irq_Ether, NULL);
 
 	netif_set_default(&netif);
 	netif_set_up(&netif);   /* send broadcast arp packet */
