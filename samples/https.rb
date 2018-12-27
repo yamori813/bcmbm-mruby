@@ -1,6 +1,6 @@
 begin
 
-yabm = YABM.new(1)
+yabm = YABM.new(YABM::MODULE_BCM4712)
 
 addr = "10.0.1.140"
 mask = "255.255.255.0"

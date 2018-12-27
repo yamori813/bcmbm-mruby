@@ -4,7 +4,7 @@
 
 begin
 
-rtl = YABM.new(YABM::MODULE_HOMESPOTCUBE)
+rtl = YABM.new(YABM::MODULE_BCM4712)
 
 rtl.print "Hello Bear Metal mruby on YABM"
 
