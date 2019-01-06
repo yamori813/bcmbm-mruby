@@ -962,7 +962,7 @@ robosw_r(bcm4401_softc *sc, int page, int addr, int len)
     int res = mii_read(sc, ROBOSW_DATA_REG_BASE);
     if (len == 4)
       res |= mii_read(sc, ROBOSW_DATA_REG_BASE+1) << 16;
-xprintf("MORI MORI read %d %d %d %d\n", page, addr, res, len);
+//xprintf("MORI MORI read %d %d %d %d\n", page, addr, res, len);
     return res;
 }
 
@@ -1002,7 +1002,7 @@ uint8_t *ptr = (uint8_t *)val;
       mii_write(sc, ROBOSW_DATA_REG_BASE+0, val16);
       break;
     }
-xprintf("MORI MORI write %d %d %x %d\n", page, addr, val16, len);
+//xprintf("MORI MORI write %d %d %x %d\n", page, addr, val16, len);
     mii_write(sc, ROBOSW_RW_CONTROL_REG, (addr << 8) | RW_CONTROL_WRITE);
     while(mii_read(sc, ROBOSW_RW_CONTROL_REG) & 0x0003)
         ;
@@ -1221,7 +1221,8 @@ bcm4401_hwinit(bcm4401_softc *sc)
 	    (void)mii_read(sc, R_INTERRUPT);  /* clear any pending */  
 	    }
 	
-	bcm4401_set_hw_addr(sc, sc->hwaddr);
+	if (!isbcm5350())
+		bcm4401_set_hw_addr(sc, sc->hwaddr);
 	WRITECSR(sc, R_CAM_CONTROL, M_CAMCTL_CE);
 
 	/* XXX Set the transmit watermark here, if needed. */
@@ -1251,14 +1252,16 @@ bcm4401_hwinit(bcm4401_softc *sc)
 	ctrl |= M_EMCTL_CC;
 	WRITECSR(sc, R_EMAC_CONTROL, ctrl);
 
-	bcm4401_set_linkspeed(sc);
+	if (!isbcm5350())
+		bcm4401_set_linkspeed(sc);
 
 	WRITECSR(sc, R_XMT_MAX_LENGTH, MAX_ETHER_PACK);
 
 	WRITECSR(sc, R_INT_RECV_LAZY, V_INTLZY_FC(1) | V_INTLZY_TO(100));
 
 	/* Enable the MAC */
-	ctrl = READCSR(sc, R_ENET_CONTROL);
+	if (!isbcm5350())
+		ctrl = READCSR(sc, R_ENET_CONTROL);
 	ctrl |= M_ECTL_EE;
 	WRITECSR(sc, R_ENET_CONTROL, ctrl);
 
@@ -2044,13 +2047,33 @@ cfe_output(int buf_length, char *buf_ptr)
     return 0;
 }
 
-void cfe_ether_init(char *macaddr)
+int isbcm5350()
 {
-cfe_driver_t dev;
+uint32_t chipid;
+
+    chipid = *(volatile uint32_t *)PHYS_TO_K1(SB_CHIPC_BASE);
+    if ((chipid & 0xffff) == 0x5350)
+      return 1;
+    else
+      return 0;
+}
+
+int isbcm535x()
+{
 uint32_t chipid;
 
     chipid = *(volatile uint32_t *)PHYS_TO_K1(SB_CHIPC_BASE);
     if ((chipid & 0xfff0) == 0x5350)
+      return 1;
+    else
+      return 0;
+}
+
+void cfe_ether_init(char *macaddr)
+{
+cfe_driver_t dev;
+
+    if (isbcm535x())
         sb_ether_probe(&dev, 0, 0x1e, macaddr);
     else
         sb_ether_probe(&dev, 1, 0, macaddr);

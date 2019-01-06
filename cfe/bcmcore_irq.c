@@ -307,6 +307,8 @@ bcmcore_map_irq(unsigned int irq)
 #if !defined(_BCM96345_) && !defined(_BCM9635x_) /* XXX cleanup */
     if (irq == 5)
       return 7;
+    else if(isbcm535x())
+      return irq + 3;
     else
       return sb_map_irq(irq) + 2;
 #else
