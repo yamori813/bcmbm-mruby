@@ -20,9 +20,13 @@ timer_init()
 {
 int clk;
 
-	clk = sb_cpu_clock();
+	if(isbcm5354()) {
+		clk = 240 * 1000 * 1000;
+	} else {
+		clk = sb_cpu_clock();
+		cfe_timer_init(clk);
+	}
 	xprintf("Clock : %d\n", clk);
-	cfe_timer_init(clk);
 	interval = (clk / 2) / 100;
 
 	cfe_request_irq(5, timer_isr, 0, CFE_IRQ_FLAGS_SHARED, 0);

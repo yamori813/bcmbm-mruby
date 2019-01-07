@@ -42,6 +42,7 @@ int vmsize;
 unsigned char *mrbp;
 int mrbsize;
 unsigned char *mrbbuf;
+int bootsize;
 
 
 	cfe_init(handle,ept);
@@ -63,10 +64,16 @@ unsigned char *mrbbuf;
 
 	timer_init();
 
-	sizep = 0xa0000000 + 0x1C000000 + 0x40000 + 0x14;
+	/* cfe api of FW_GETINFO is wrong bootsize then use hardcode */
+	if(isbcm5354())
+		bootsize = 0x20000;
+	else
+		bootsize = 0x40000;
+
+	sizep = 0xa0000000 + 0x1C000000 + bootsize + 0x14;
 	vmsize = *(sizep + 3) << 24 | *(sizep + 2) << 16 |
 	    *(sizep + 1) << 8 | *sizep;
-	mrbp = 0xa0000000 + 0x1C000000 + 0x40000 + vmsize;
+	mrbp = 0xa0000000 + 0x1C000000 + bootsize + vmsize;
 	if (*(mrbp + 0) == 0x52 && *(mrbp + 1) == 0x49 &&
 	    *(mrbp + 2) == 0x54 && *(mrbp + 3) == 0x45) {
 		mrbsize = *(mrbp + 0xa) << 24 | *(mrbp + 0xb) << 16 |
@@ -84,7 +91,7 @@ unsigned char *mrbbuf;
 		}
 		mrb_close(mrb);
 	} else {
-		print("can't find mrb code on flash?n");
+		print("can't find mrb code on flash\n");
 	}
 
 //	sb_chip_reset();

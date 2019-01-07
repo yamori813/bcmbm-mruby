@@ -1023,7 +1023,9 @@ mii_autonegotiate(bcm4401_softc *sc)
 	/* XXX for SOC parts, this address may indicate a Roboswitch. */
 	xprintf("100BaseT FDX (switch)\n");
 	linkspeed = ETHER_SPEED_100FDX;	 
-	robosw_init(sc, sc->hwaddr);
+	/* Todo: may be robosw code is old. need newer code merge */
+	if(!isbcm5354())
+	    robosw_init(sc, sc->hwaddr);
 	}        
     else {
 	/* Read twice to clear latching bits */
@@ -2045,6 +2047,17 @@ cfe_output(int buf_length, char *buf_ptr)
 #endif
 
     return 0;
+}
+
+int isbcm5354()
+{
+uint32_t chipid;
+
+    chipid = *(volatile uint32_t *)PHYS_TO_K1(SB_CHIPC_BASE);
+    if ((chipid & 0xffff) == 0x5354)
+      return 1;
+    else
+      return 0;
 }
 
 int isbcm5350()
