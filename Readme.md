@@ -11,13 +11,13 @@ hndtools-mipsel-linux-uclibc-4.2.3
 
 I build on FreeBSD/amd64 11.2 used by linux emuration.  
 
-Now only work on BCM4712.  
+Work on BCM4712, BCM53510, BCM5352, BCM5354.  
 
 Todo  
 
-flexible memory size  
+2038 problem  
+real memory size  
 UART support  
-BCM535x support  
 SPI flash support  
 Switch support  
 I2C support  
