@@ -3,7 +3,7 @@ This projct use these libraries.
 newlib-3.0.0.20180831  
 lwip-2.1.2  
 bearssl-0.6  
-mruby (github master)  
+mruby (git submodule)  
 
 Build tools.  
 
