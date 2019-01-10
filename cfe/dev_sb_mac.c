@@ -2049,12 +2049,18 @@ cfe_output(int buf_length, char *buf_ptr)
     return 0;
 }
 
-int isbcm5354()
+int getchipid()
 {
 uint32_t chipid;
 
     chipid = *(volatile uint32_t *)PHYS_TO_K1(SB_CHIPC_BASE);
-    if ((chipid & 0xffff) == 0x5354)
+    return chipid & 0xffff;
+}
+
+int isbcm5354()
+{
+
+    if (getchipid() == 0x5354)
       return 1;
     else
       return 0;
@@ -2062,10 +2068,8 @@ uint32_t chipid;
 
 int isbcm5350()
 {
-uint32_t chipid;
 
-    chipid = *(volatile uint32_t *)PHYS_TO_K1(SB_CHIPC_BASE);
-    if ((chipid & 0xffff) == 0x5350)
+    if (getchipid() == 0x5350)
       return 1;
     else
       return 0;
@@ -2073,10 +2077,8 @@ uint32_t chipid;
 
 int isbcm535x()
 {
-uint32_t chipid;
 
-    chipid = *(volatile uint32_t *)PHYS_TO_K1(SB_CHIPC_BASE);
-    if ((chipid & 0xfff0) == 0x5350)
+    if ((getchipid() & 0xfff0) == 0x5350)
       return 1;
     else
       return 0;

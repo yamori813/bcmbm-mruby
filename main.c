@@ -8,6 +8,14 @@
 
 #include "xprintf.h"
 
+#define	MODULE_UNKNOWN				0
+#define	MODULE_RTL8196C				1
+#define	MODULE_BCM4712				2
+#define	MODULE_RTL8196E				3
+#define	MODULE_BCM5350				4
+#define	MODULE_BCM5352				5
+#define	MODULE_BCM5354				6
+
 extern char version[];
 
 void put(unsigned char c)
@@ -109,4 +117,21 @@ cli()
 sti()
 {
 	cfe_irq_enable(sr);
+}
+
+int getarch()
+{
+int chipid;
+
+	chipid = getchipid();
+	if (chipid == 0x4712)
+		return MODULE_BCM4712;
+	else if (chipid == 0x5350)
+		return MODULE_BCM5350;
+	else if (chipid == 0x5352)
+		return MODULE_BCM5352;
+	else if (chipid == 0x5354)
+		return MODULE_BCM5354;
+	else
+		return MODULE_UNKNOWN;
 }

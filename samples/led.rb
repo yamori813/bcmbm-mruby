@@ -1,6 +1,6 @@
 begin
 
-yabm = YABM.new(YABM::MODULE_BCM4712)
+yabm = YABM.new
 
 bit = 0
 
