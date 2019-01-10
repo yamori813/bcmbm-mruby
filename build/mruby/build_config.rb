@@ -94,13 +94,13 @@ MRuby::CrossBuild.new('broadcom') do |conf|
   cc.defines << %w(MRB_WITHOUT_FLOAT)
   cc.defines << %w(YABM_BRAODCOM)
   conf.cc.flags << "-Os -g -fno-pic -mno-abicalls"
+# for debug
+#  conf.cc.flags << "-O0 -g3 -fno-pic -mno-abicalls"
   conf.cc.flags << "-pipe -mlong-calls"
   conf.cc.include_paths = ["#{root}/include", "../newlib-3.0.0.20180831/newlib/libc/include"]
 
-#  conf.gem :github => 'yamori813/mruby-yabm'
-  conf.gem '/usr/home/hiroki/kani/mruby-yabm'
-#  conf.gem :github => 'yamori813/mruby-simplehttp'
-  conf.gem '/usr/home/hiroki/kani/mruby-simplehttp'
+  conf.gem :github => 'yamori813/mruby-yabm'
+  conf.gem :github => 'yamori813/mruby-simplehttp'
 # use in mruby-simplehttp'
   conf.gem :core => "mruby-string-ext"
 
