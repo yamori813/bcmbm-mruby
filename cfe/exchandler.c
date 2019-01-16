@@ -80,41 +80,41 @@ extern void CPUCFG_TLBHANDLER(void);
 extern uint32_t _getstatus(void);
 extern void _setstatus(uint32_t);
 
-static const char *regnames = "0 ATv0v1a0a1a2a3t0t1t2t3t4t5t6t7"
-                              "s0s1s2s3s4s5s6s7t8t9k0k1gpspfpra";
-static const char *excnames = 
-    "Interrupt"	/* 0 */
-    "TLBMod   "	/* 1 */
-    "TLBMissRd"	/* 2 */
-    "TLBMissWr"	/* 3 */
-    "AddrErrRd"	/* 4 */
-    "AddrErrWr"	/* 5 */
-    "BusErrI  "	/* 6 */
-    "BusErrD  "	/* 7 */
-    "Syscall  "	/* 8 */
-    "Breakpt  "	/* 9 */
-    "InvOpcode"	/* 10 */
-    "CoProcUnu"	/* 11 */
-    "ArithOvfl"	/* 12 */
-    "TrapExc  "	/* 13 */
-    "VCEI     "	/* 14 */
-    "FPUExc   "	/* 15 */
-    "CP2Exc   "	/* 16 */
-    "Exc17    " /* 17 */
-    "Exc18    " /* 18 */
-    "Exc19    " /* 19 */
-    "Exc20    " /* 20 */
-    "Exc21    " /* 21 */
-    "Exc22    " /* 22 */
-    "Watchpt  " /* 23 */
-    "Exc24    " /* 24 */
-    "Exc25    " /* 25 */
-    "Exc26    " /* 26 */
-    "Exc27    " /* 27 */
-    "Exc28    " /* 28 */
-    "Exc29    " /* 29 */
-    "Exc30    " /* 30 */
-    "VCED     "; /* 31 */
+static const char *regnames[] = {"0 ","AT","v0","v1","a0","a1","a2","a3","t0","t1","t2","t3","t4","t5","t6","t7",
+                              "s0","s1","s2","s3","s4","s5","s6","s7","t8","t9","k0","k1","gp","sp","fp","ra"};
+static const char *excnames[] = {
+    "Interrupt",	/* 0 */
+    "TLBMod",	/* 1 */
+    "TLBMissRd",	/* 2 */
+    "TLBMissWr",	/* 3 */
+    "AddrErrRd",	/* 4 */
+    "AddrErrWr",	/* 5 */
+    "BusErrI",	/* 6 */
+    "BusErrD",	/* 7 */
+    "Syscall",	/* 8 */
+    "Breakpt",	/* 9 */
+    "InvOpcode",	/* 10 */
+    "CoProcUnu",	/* 11 */
+    "ArithOvfl",	/* 12 */
+    "TrapExc",	/* 13 */
+    "VCEI",	/* 14 */
+    "FPUExc",	/* 15 */
+    "CP2Exc",	/* 16 */
+    "Exc17", /* 17 */
+    "Exc18", /* 18 */
+    "Exc19", /* 19 */
+    "Exc20", /* 20 */
+    "Exc21", /* 21 */
+    "Exc22", /* 22 */
+    "Watchpt", /* 23 */
+    "Exc24", /* 24 */
+    "Exc25", /* 25 */
+    "Exc26", /* 26 */
+    "Exc27", /* 27 */
+    "Exc28", /* 28 */
+    "Exc29", /* 29 */
+    "Exc30", /* 30 */
+    "VCED"}; /* 31 */
 
 
 
@@ -139,7 +139,6 @@ void cfe_exception(int code,mips_reg_t *info)
     int idx;
 
     SETLEDS("EXC!");
-xprintf("EXC!");
     
     if(exc_handler.catch_exc == 1) {
 	/*Deal with exception without restarting CFE.*/
@@ -156,18 +155,18 @@ xprintf("EXC!");
     
 
 #if CPUCFG_REGS32
-    xprintf("**Exception %d: EPC=%08X, Cause=%08X (%9s)\n",
+    xprintf("**Exception %d: EPC=%08X, Cause=%08X (%s)\n",
 	    code,(uint32_t)info[XCP0_EPC],
 	    (uint32_t)info[XCP0_CAUSE],
-	    excnames + G_CAUSE_EXC((uint32_t)info[XCP0_CAUSE])*9);
+	    excnames[G_CAUSE_EXC((uint32_t)info[XCP0_CAUSE])]);
     xprintf("                RA=%08X, VAddr=%08X\n",
 	    (uint32_t)info[XGR_RA],(uint32_t)info[XCP0_VADDR]);
     xprintf("\n");
     for (idx = 0;idx < 32; idx+= 2) {
-	xprintf("        %2s ($%2d) = %08X     %2s ($%2d) = %08X\n",
-		regnames+(idx*2),
+	xprintf("        %s ($%2d) = %08X     %s ($%2d) = %08X\n",
+		regnames[idx],
 		idx,(uint32_t)info[XGR_ZERO+idx],
-		regnames+((idx+1)*2),
+		regnames[idx + 1],
 		idx+1,(uint32_t)info[XGR_ZERO+idx+1]);
 	}
 #else
