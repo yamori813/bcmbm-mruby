@@ -24,8 +24,8 @@ int clk;
 		clk = 240 * 1000 * 1000;
 	} else {
 		clk = sb_cpu_clock();
-		cfe_timer_init(clk);
 	}
+	cfe_timer_init(clk);
 	xprintf("Clock : %d\n", clk);
 	interval = (clk / 2) / 100;
 
