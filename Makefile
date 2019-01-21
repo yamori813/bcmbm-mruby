@@ -32,14 +32,13 @@ OBJS = start.o main.o syscalls.o
 OBJS += bcm_timer.o bcm_ether.o bcm_gpio.o
 OBJS += xprintf.o mt19937ar.o
 OBJS += net.o bear.o
-OBJS += ver.o
 
 RBSCRIPT = samples/hello.rb
 
 main.bin.gz : $(OBJS) cfe/libcfe.a
 	./ver.sh
 	$(CROSS)-cc $(CROSS_CFLAGS) -c ver.c
-	$(CROSS)-ld $(CROSS_LDFLAGS) -T main.ld -o main.elf $(OBJS) $(CROSS_LIBS)
+	$(CROSS)-ld $(CROSS_LDFLAGS) -T main.ld -o main.elf $(OBJS) ver.o $(CROSS_LIBS)
 	$(CROSS)-objcopy -O binary main.elf main.bin
 	gzip -f --best main.bin
 
@@ -54,4 +53,4 @@ image : main.bin.gz
 	tools/asustrx -o main.trx main.bin.gz hoge.mrb
 
 clean:
-	rm -rf main.elf $(OBJS) hoge.c
+	rm -rf main.elf $(OBJS) hoge.c ver.c
