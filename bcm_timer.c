@@ -55,3 +55,8 @@ time(unsigned long *t)
 {
 	return sys_now()/1000 + starttime;
 }
+
+udelay(int us)
+{
+	cfe_usleep(us);
+}
