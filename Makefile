@@ -49,7 +49,7 @@ start.o : start.S
 .c.o:
 	$(CROSS)-cc -O2 $(CROSS_CFLAGS) -c $<
 
-image : main.bin.gz
+image :
 	./mruby/build/host/bin/mrbc -ohoge.mrb $(RBSCRIPT)
 	tools/asustrx -o main.trx main.bin.gz hoge.mrb
 
