@@ -68,7 +68,13 @@
 #include <errno.h>
 #include <unistd.h>
 #include <sys/types.h>
+#ifdef __APPLE__
+#include <libkern/OSByteOrder.h>
+#define le32toh(x) OSSwapLittleToHostInt32(x)
+#define htole32(x) OSSwapHostToLittleInt32(x)
+#else
 #include <sys/endian.h>
+#endif
 //#include <zlib.h>
 
 uint32_t crc32buf(char *buf, size_t len);
@@ -258,7 +264,7 @@ int main(int argc, char **argv)
 		n = fread(buf + cur_len, 1, maxlen - cur_len, in);
 		if (!feof(in)) {
 			fprintf(stderr, "fread failure or file \"%s\" too large cur:%d max: %d\n",
-					argv[optind], cur_len, maxlen);
+					argv[optind], cur_len, (int)maxlen);
 			fclose(in);
 			return EXIT_FAILURE;
 		}
