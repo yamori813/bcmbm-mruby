@@ -1,9 +1,19 @@
+def bit(val)
+bit = 0
+  while val != 0 do
+    val = val >> 1
+    bit = bit + 1
+  end
+  return bit - 1
+end
+
 begin
 
 yabm = YABM.new
 
 count = 0
-last = 0
+
+last = yabm.gpiogetdat
 
 while 1 do
 
@@ -12,7 +22,8 @@ while 1 do
   end
   val = yabm.gpiogetdat
   if val != last
-    yabm.print val.to_s + "\n"
+    b = bit((val - last).abs)
+    yabm.print b.to_s + "\n"
     last = val
   end
 end
