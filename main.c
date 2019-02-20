@@ -57,8 +57,7 @@ int bootsize;
 
 	nvram_init(0xa0000000 + 0x1C000000 + 0x003F8000, 0x8000);
 
-	unsigned long init[4]={0x123, 0x234, 0x345, 0x456}, length=4;
-	init_by_array(init, length);
+	mt19937ar_init();
 
 	xfunc_out=put;
 
