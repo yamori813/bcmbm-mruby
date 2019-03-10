@@ -2,6 +2,8 @@
 
 #include "time.h"
 
+#define CHIPC_WATCHDOG  0xb8000080
+
 unsigned int alarm;
 
 unsigned int interval;
@@ -35,6 +37,37 @@ int clk;
 	cfe_enable_irq(5);
 	alarm = _getticks() + interval;
 	_setalarm(alarm);
+}
+
+int wdcount;
+
+void watchdog_start(int sec)
+{
+unsigned long *lptr;
+
+	lptr = (unsigned long *)CHIPC_WATCHDOG;
+
+	wdcount = sec * 100;
+
+	*lptr = wdcount;
+}
+
+void watchdog_reset()
+{
+unsigned long *lptr;
+
+	lptr = (unsigned long *)CHIPC_WATCHDOG;
+
+	*lptr = wdcount;
+}
+
+void watchdog_stop()
+{
+unsigned long *lptr;
+
+	lptr = (unsigned long *)CHIPC_WATCHDOG;
+
+	*lptr = 0;
 }
 
 int sys_now()
