@@ -1,7 +1,5 @@
 #include "cfe/cfe_irq.h"
 
-#include "time.h"
-
 #define CHIPC_WATCHDOG  0xb8000080
 
 unsigned int alarm;
@@ -85,8 +83,8 @@ delay_ms(int ms)
 	cfe_usleep(ms * 1000);
 }
 
-time_t
-time(time_t *t)
+unsigned long
+time(unsigned long *t)
 {
 	return sys_now()/1000 + starttime;
 }

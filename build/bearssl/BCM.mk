@@ -38,7 +38,7 @@ MKDIR = mkdir -p
 
 # C compiler and flags.
 CC = mips-cc
-CFLAGS = -DBR_USE_URANDOM=0 -I../newlib-3.0.0.20180831/newlib/libc/include -march=mips32 -Os -g -fno-pic -mno-abicalls -fno-strict-aliasing -fno-common -fomit-frame-pointer -G 0 -pipe -mlong-calls
+CFLAGS = -DBR_USE_URANDOM=0 -march=mips32 -Os -g -fno-pic -mno-abicalls -fno-strict-aliasing -fno-common -fomit-frame-pointer -G 0 -pipe -mlong-calls
 CCOUT = -c -o 
 
 # Static library building tool.
