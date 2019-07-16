@@ -163,6 +163,7 @@ LEAF(bcmcore_cp0_init)
 		mtc0	v0,C0_SR		# set up the status register
 
 
+#if 0
 		mfc0	v0,C0_CONFIG		# get current CONFIG register
 		srl	v0,v0,3			# strip out K0 bits
 		sll	v0,v0,3			# k0 bits now zero
@@ -175,6 +176,7 @@ LEAF(bcmcore_cp0_init)
 
 		mtc0	zero,C0_TLBHI		# TLB entry (high half)
 		nop
+#endif
 
 
 	#
@@ -190,6 +192,7 @@ LEAF(bcmcore_cp0_init)
 	# Initialize all the TLB entries to some invalid value
 	#
 
+#if 0
 		mtc0	zero,C0_TLBLO0		/* tlblo0 = invalid */
 		nop
 		mtc0	zero,C0_TLBLO1		/* tlblo1 = invalid */
@@ -211,6 +214,7 @@ LEAF(bcmcore_cp0_init)
 		bnez	t1,1b
 		subu	t1,1			# BDSLOT
 		.set reorder
+#endif
 
 
 /*

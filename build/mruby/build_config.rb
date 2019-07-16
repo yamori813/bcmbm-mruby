@@ -93,7 +93,7 @@ MRuby::CrossBuild.new('broadcom') do |conf|
   cc.defines << %w(MRB_DISABLE_STDIO)
   cc.defines << %w(MRB_WITHOUT_FLOAT)
   cc.defines << %w(YABM_BRAODCOM)
-  conf.cc.flags << "-Os -g -fno-pic -mno-abicalls"
+  conf.cc.flags << "-fno-pic -mno-abicalls"
 # for debug
 #  conf.cc.flags << "-O0 -g3 -fno-pic -mno-abicalls"
   conf.cc.flags << "-pipe -mlong-calls"

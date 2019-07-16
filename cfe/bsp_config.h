@@ -46,7 +46,7 @@
     ********************************************************************* */
 
 
-#define CFG_INIT_L1		1	/* initialize the L1 cache */
+#define CFG_INIT_L1		0	/* initialize the L1 cache */
 #define CFG_INIT_L2		0	/* there is no L2 cache */
 
 #define CFG_INIT_DRAM		1	/* initialize DRAM controller */

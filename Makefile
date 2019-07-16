@@ -26,7 +26,7 @@ CROSS_CFLAGS += -I$(BARESSLDIR)/inc
 CROSS_CFLAGS +=  -march=mips32 -Os -g -fno-pic -mno-abicalls
 CROSS_CFLAGS += -fno-strict-aliasing -fno-common -fomit-frame-pointer -G 0
 CROSS_CFLAGS += -pipe -mlong-calls
-CROSS_CFLAGS += -DUSE_INQUEUE=1
+CROSS_CFLAGS += -DUSE_INQUEUE=1 -mips32
 
 OBJS = start.o main.o syscalls.o
 OBJS += bcm_timer.o bcm_ether.o bcm_gpio.o
