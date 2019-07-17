@@ -7,15 +7,28 @@ unsigned int alarm;
 unsigned int interval;
 unsigned long starttime;
 static volatile unsigned int jiffies = 0;
+int wdticks = 0;
+int wdcount;
 
 static void
 timer_isr(void *arg)
 {
+unsigned long *lptr;
+
 	net_poll();
 
 	alarm += interval;
 	_setalarm(alarm);
 	++jiffies;
+
+	if (wdticks !=0) {
+		if (wdcount == 0) {
+			lptr = (unsigned long *)CHIPC_WATCHDOG;
+			*lptr = 1;
+		} else {
+			--wdcount;
+		}
+	}
 }
 
 timer_init()
@@ -37,35 +50,28 @@ int clk;
 	_setalarm(alarm);
 }
 
-int wdcount;
+/*
+  BCM watchdog reg is very strang and chip version depend.
+  I can't use correctly. This is only workadound.
+ */
 
 void watchdog_start(int sec)
 {
-unsigned long *lptr;
 
-	lptr = (unsigned long *)CHIPC_WATCHDOG;
-
-	wdcount = sec * 100;
-
-	*lptr = wdcount;
+	wdticks = sec * 100;
+	wdcount = wdticks;
 }
 
 void watchdog_reset()
 {
-unsigned long *lptr;
 
-	lptr = (unsigned long *)CHIPC_WATCHDOG;
-
-	*lptr = wdcount;
+	wdcount = wdticks;
 }
 
 void watchdog_stop()
 {
-unsigned long *lptr;
 
-	lptr = (unsigned long *)CHIPC_WATCHDOG;
-
-	*lptr = 0;
+	wdticks = 0;
 }
 
 int sys_now()
