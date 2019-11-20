@@ -90,6 +90,7 @@ MRuby::CrossBuild.new('broadcom') do |conf|
   conf.cc.command = 'mips-cc'
   conf.archiver.command = 'mips-ar'
 
+  cc.defines << %w(MRB_METHOD_T_STRUCT)
   cc.defines << %w(MRB_DISABLE_STDIO)
   cc.defines << %w(MRB_WITHOUT_FLOAT)
   cc.defines << %w(YABM_BRAODCOM)
