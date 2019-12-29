@@ -32,7 +32,6 @@ OBJS = start.o main.o syscalls.o
 OBJS += bcm_timer.o bcm_ether.o bcm_gpio.o
 OBJS += xprintf.o mt19937ar.o
 OBJS += net.o bear.o
-OBJS += i2c.o
 
 RBSCRIPT = samples/hello.rb
 
