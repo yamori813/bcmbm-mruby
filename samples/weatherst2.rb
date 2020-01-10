@@ -28,27 +28,8 @@ def delay(yabm, val)
   end
 end
 
-def dot2str(p)
-  pstr = (p / 100).to_s + "."
-  syo = p % 100
-  if syo < 10 then
-    pstr = pstr + "0" + syo.to_s
-  else
-    pstr = pstr + syo.to_s
-  end
-  return pstr
-end
-
-def mplstr(pressure)
-  frec = ((pressure & 0xf) * 1000) / 16
-  if frec == 0  then
-    pa =  (pressure >> 4).to_s + "000"
-  elsif frec < 100
-    pa =  (pressure >> 4).to_s + "0" + frec.to_s
-  else
-    pa =  (pressure >> 4).to_s + frec.to_s
-  end
-  return pa.insert(-3, ".")
+def pointstr(p, c)
+  return p.to_s.insert(-1 - c, ".")
 end
 
 class SHT3x
@@ -113,78 +94,29 @@ class MPL115
 
 # This calculate code is based c source code in NXP AN3785 document
 
-def calculatePCompLong(padc, tadc, a0, b1, b2, c12)
-  if a0 >= 0x8000 then
-    a0 = a0 - 0x10000
+  def calculatePCompShort(padc, tadc, a0, b1, b2, c12)
+    if a0 >= 0x8000 then
+      a0 = a0 - 0x10000
+    end
+    if b1 >= 0x8000 then
+      b1 = b1 - 0x10000
+    end
+    if b2 >= 0x8000 then
+      b2 = b2 - 0x10000
+    end
+    if c12 >= 0x8000 then
+      c12 = c12 - 0x10000
+    end
+    padc = padc >> 6
+    tadc = tadc >> 6
+    c12x2 = (c12 * tadc) >> 11
+    a1 = b1 + c12x2;
+    a1x1 = a1 * padc
+    y1 = (a0 << 10) + a1x1
+    a2x2 = (b2 * tadc) >> 1
+    pcomp = (y1 + a2x2) >> 9
+    return pcomp
   end
-  if b1 >= 0x8000 then
-    b1 = b1 - 0x10000
-  end
-  if b2 >= 0x8000 then
-    b2 = b2 - 0x10000
-  end
-  if c12 >= 0x8000 then
-    c12 = c12 - 0x10000
-  end
-  padc = padc >> 6
-  tadc = tadc >> 6
-# ******* STEP 1 : c12x2 = c12 * Tadc
-  lt1 = c12
-  lt2 = tadc
-  lt3 = lt1 * lt2
-  c12x2 = lt3 >> 11
-# ******* STEP 2 : a1 = b1 + c12x2
-  lt1 = b1
-  lt2 = c12x2
-  lt3 = lt1 + lt2
-  a1 = lt3
-# ******* STEP 3 : a1x1 = a1 * Padc
-  lt1 = a1
-  lt2 = padc
-  lt3 = lt1 * lt2
-  a1x1 = lt3
-# ******* STEP 4 : y1 = a0 + a1x1
-  lt1 = a0 << 10
-  lt2 = a1x1
-  lt3 = lt1 + lt2
-  y1 = lt3
-# ******* STEP 5 : a2x2 = b2 * Tadc
-  lt1 = b2
-  lt2 = tadc
-  lt3 = lt1 * lt2;
-  a2x2 = lt3 >> 1
-# ******* STEP 6 : PComp = y1 + a2x2
-  lt1 = y1
-  lt2 = a2x2
-  lt3 = lt1 + lt2
-  pcomp = lt3 >> 9
-
-  return pcomp
-end
-
-def calculatePCompShort(padc, tadc, a0, b1, b2, c12)
-  if a0 >= 0x8000 then
-    a0 = a0 - 0x10000
-  end
-  if b1 >= 0x8000 then
-    b1 = b1 - 0x10000
-  end
-  if b2 >= 0x8000 then
-    b2 = b2 - 0x10000
-  end
-  if c12 >= 0x8000 then
-    c12 = c12 - 0x10000
-  end
-  padc = padc >> 6
-  tadc = tadc >> 6
-  c12x2 = (c12 * tadc) >> 11
-  a1 = b1 + c12x2;
-  a1x1 = a1 * padc
-  y1 = (a0 << 10) + a1x1
-  a2x2 = (b2 * tadc) >> 1
-  pcomp = (y1 + a2x2) >> 9
-  return pcomp
-end
 
   def readPressure
     while @y.i2cchk(MPLADDR) == 0 do
@@ -197,7 +129,8 @@ end
 
     pcomp = calculatePCompShort(padc, tadc, @a0, @b1, @b2, @c12)
     pressure = ((pcomp * 1041) >> 14) + 800
-    return pressure
+    frec = ((pressure & 0xf) * 1000) / 16
+    return ((pressure >> 4) * 1000) + frec
   end
 end
 
@@ -226,28 +159,57 @@ mpl.init yabm
 interval = 20
 count = 0
 
+lastst = 0
+lastsh = 0
+lastmp = 0
+
+yabm.watchdogstart(300)
+
 while 1 do
+
+  error = 0
 
   reg = yabm.gpiogetdat
   yabm.gpiosetdat(reg & ~LED10)
 
   t, h = sht.getCelsiusAndHumidity
-  yabm.print count.to_s + " " + dot2str(t) + " " + dot2str(h) + " "
+  if count == 0 || (lastst - t).abs < 100 then
+    lastst = t
+  else
+    t = lastst
+    error = error | (1 << 0)
+  end
+  if count == 0 || (lastsh - h).abs < 100 then
+    lastsh = h
+  else
+    h = lastsh
+    error = error | (1 << 1)
+  end
+  yabm.print count.to_s + " " + pointstr(t, 2) + " " + pointstr(h, 2) + " "
 
-  pressure = mpl.readPressure
-  yabm.print mplstr(pressure) + " "
+  p = mpl.readPressure
+  if count == 0 || (lastmp - p).abs < 500 then
+    lastmp = p
+  else
+    p = lastmp
+    error = error | (1 << 2)
+  end
+  yabm.print pointstr(p, 2) + " " + error.to_s + "\r\n"
 
   if !NONET then
     para = "api_key=" + APIKEY
     para = para + "&field1=" + count.to_s
-    para = para + "&field2=" + dot2str(t)
-    para = para + "&field3=" + dot2str(h)
-    para = para + "&field4=" + mplstr(pressure)
+    para = para + "&field2=" + pointstr(t, 2)
+    para = para + "&field3=" + pointstr(h, 2)
+    para = para + "&field4=" + pointstr(p, 2)
+    para = para + "&field5=" + error.to_s
     res = SimpleHttp.new("https", "api.thingspeak.com", 443).request("GET", "/update?" + para, {'User-Agent' => "test-agent"})
   end
 
   reg = yabm.gpiogetdat
   yabm.gpiosetdat(reg | LED10)
+
+  yabm.watchdogreset
 
   delay(yabm, 1000 * interval)
   count = count + 1
