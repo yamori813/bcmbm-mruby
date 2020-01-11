@@ -29,8 +29,18 @@ def delay(yabm, val)
 end
 
 def pointstr(p, c)
-  return p.to_s.insert(-1 - c, ".")
+  if p == 0 then
+    return "0." + "0" * c
+  elsif p.abs < 10 ** c
+    l = c - p.abs.to_s.length + 1
+    s = p.to_s.insert(p < 0 ? 1 : 0, "0" * l)
+    return s.insert(-1 - c, ".")
+  else
+    return p.to_s.insert(-1 - c, ".")
+  end
 end
+
+# senser class
 
 class SHT3x
   def init yabm
@@ -179,7 +189,7 @@ while 1 do
     t = lastst
     error = error | (1 << 0)
   end
-  if count == 0 || (lastsh - h).abs < 100 then
+  if count == 0 || (lastsh - h).abs < 200 then
     lastsh = h
   else
     h = lastsh
@@ -188,7 +198,7 @@ while 1 do
   yabm.print count.to_s + " " + pointstr(t, 2) + " " + pointstr(h, 2) + " "
 
   p = mpl.readPressure
-  if count == 0 || (lastmp - p).abs < 500 then
+  if count == 0 || (lastmp - p).abs < 1000 then
     lastmp = p
   else
     p = lastmp
