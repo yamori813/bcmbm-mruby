@@ -8,6 +8,16 @@
 
 #include "xprintf.h"
 
+typedef struct {
+    long long fwi_version;                /* major, minor, eco version */
+    long long fwi_totalmem;               /* total installed mem */
+    long long fwi_flags;                  /* various flags */
+    long long fwi_boardid;                /* board ID */
+    long long fwi_bootarea_va;            /* VA of boot area */
+    long long fwi_bootarea_pa;            /* PA of boot area */
+    long long fwi_bootarea_size;          /* size of boot area */
+} cfe_fwinfo_t;
+
 #define	MODULE_UNKNOWN				0
 #define	MODULE_RTL8196C				1
 #define	MODULE_BCM4712				2
@@ -51,7 +61,9 @@ unsigned char *mrbp;
 int mrbsize;
 unsigned char *mrbbuf;
 int bootsize;
-
+cfe_fwinfo_t fwinfo;
+int tomem;
+int sp;
 
 	cfe_init(handle,ept);
 
@@ -63,6 +75,13 @@ int bootsize;
 
 	print(version);
 
+	cfe_getfwinfo(&fwinfo);
+	tomem = fwinfo.fwi_totalmem;
+	if (tomem > 0x800000)
+		sp = relocsp(tomem - 0x800000);
+
+	xprintf("Mem : %x\n", tomem);
+	xprintf("SP : %x\n", sp);
 	cfe_getenv("BOOT_CONSOLE",str,sizeof(str));
 	xprintf("BOOT_CONSOLE : %s\n", str);
 

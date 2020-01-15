@@ -1,7 +1,7 @@
 # Copyright (c) 2018 Hiroki Mori. All rights reserved.
 
 	.globl  main
-	.globl  _init
+	.globl  relocsp
 
 	.text
 	.globl	start
@@ -26,3 +26,16 @@ loop:
 	j	loop
 	.end start
 
+relocsp:
+	move	$8, $sp
+	li	$9, 0x80800000
+	move	$10, $sp
+	add	$10, $10, $4
+2:	lw	$11, 0($8)
+	sw	$11, 0($10)
+	add	$8, 4
+	add	$10, 4
+	blt	$8,$9,2b
+	add	$sp, $sp, $4
+	move	$2, $sp
+	j	$ra
