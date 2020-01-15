@@ -24,7 +24,7 @@ if git diff-index --name-only HEAD | read dummy; then
 git="${git}-dirty"
 fi
 
-verinfo="bcmbm-mruby ${git} ${t}\\nmruby ${mgit}\\n"
+verinfo="bcmbm-mruby ${git} ${t}\\r\\nmruby ${mgit}\\r\\n"
 
 cat << EOF > ver.c
 
