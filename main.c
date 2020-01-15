@@ -77,11 +77,11 @@ int sp;
 
 	cfe_getfwinfo(&fwinfo);
 	tomem = fwinfo.fwi_totalmem;
-	if (tomem > 0x800000)
-		sp = relocsp(tomem - 0x800000);
-
 	xprintf("Mem : %x\n", tomem);
-	xprintf("SP : %x\n", sp);
+	if (tomem > 0x800000) {
+		sp = relocsp(tomem - 0x800000);
+		xprintf("SP : %x\n", sp);
+	}
 	cfe_getenv("BOOT_CONSOLE",str,sizeof(str));
 	xprintf("BOOT_CONSOLE : %s\n", str);
 
