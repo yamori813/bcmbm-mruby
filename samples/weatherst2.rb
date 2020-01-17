@@ -189,7 +189,7 @@ while 1 do
     t = lastst
     error = error | (1 << 0)
   end
-  if count == 0 || (lastsh - h).abs < 200 then
+  if count == 0 || (lastsh - h).abs < 2000 then
     lastsh = h
   else
     h = lastsh
