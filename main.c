@@ -28,11 +28,56 @@ typedef struct {
 
 extern char version[];
 
+void setbaud(int baud, int port)
+{
+int clk;
+
+	volatile char* regbase;
+
+	if (port == 0)
+		regbase = (volatile char*)0xb8000300;
+	else
+		regbase = (volatile char*)0xb8000400;
+
+	/* Todo: may be only work BCM5354 */
+	clk = 200000000 / 8 / 16 / baud;
+	*(volatile char*)(regbase + 3) = 0x80;
+	*(volatile char*)regbase = clk & 0xff;
+	*(volatile char*)(regbase + 1) = clk >> 8;
+	*(volatile char*)(regbase + 3) = 0x03;
+}
+
+// put and put2 can't marge one function. It's now work. Why....
+
+void put2(unsigned char c)
+{
+	volatile char* lsr; // Line status register.
+	volatile char* thr; // Transmitter holding register.
+
+	lsr = (volatile char*)0xb8000405;
+	thr = (volatile char*)0xb8000400;
+
+	while(((*lsr) & 0x20) == 0) ; // Wait until THR is empty.
+ 
+	*thr = c;
+}
+
+void print2(char *ptr)
+{
+	while(*ptr) {
+		put2(*ptr);
+		++ptr;
+	}
+}
+
 void put(unsigned char c)
 {
-	volatile char* lsr = (volatile char*)0xb8000305; // Line status register.
-	volatile char* thr = (volatile char*)0xb8000300; // Transmitter holding register.
- 
+	volatile char* lsr; // Line status register.
+	volatile char* thr; // Transmitter holding register.
+
+	lsr = (volatile char*)0xb8000305;
+	thr = (volatile char*)0xb8000300;
+
 	while(((*lsr) & 0x20) == 0) ; // Wait until THR is empty.
  
 	*thr = c;
