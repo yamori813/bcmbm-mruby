@@ -4,11 +4,12 @@
 
 NEWLIB=newlib-3.0.0.20180831
 
-CC=mips-cc
+CC=mips-gcc
 AR=mips-ar
 
-CROSS_CFLAGS = -Iinclude -I$(SRC)/include -I../../$(NEWLIB)/include/
+CROSS_CFLAGS = -Iinclude -I$(SRC)/include -I../../$(NEWLIB)/newlib/libc/include/
 
+CROSS_CFLAGS += -EL
 CROSS_CFLAGS += -march=mips32 -Os -g -fno-pic -mno-abicalls
 CROSS_CFLAGS += -fno-strict-aliasing -fno-common -fomit-frame-pointer -G 0
 CROSS_CFLAGS += -pipe -mlong-calls
@@ -22,7 +23,7 @@ OBJS_DRV=ethernet.o
 SRC=../src
 
 all:	$(OBJS_CORE) $(OBJS_IPV4) $(OBJS_DRV)
-	ar rs liblwip.a $(OBJS_CORE) $(OBJS_IPV4) $(OBJS_DRV)
+	$(AR) rs liblwip.a $(OBJS_CORE) $(OBJS_IPV4) $(OBJS_DRV)
 
 .c.o:
 	$(CC) $(CROSS_CFLAGS) -Iinclude -I$(SRC)/include -c $<
