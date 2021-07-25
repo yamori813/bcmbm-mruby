@@ -1,6 +1,7 @@
 NEWLIBDIR=newlib-3.0.0.20180831
 
-CROSS_CFLAGS = -I../$(NEWLIBDIR)/newlib/libc/include/
+CROSS_CFLAGS = -I../build/work/$(NEWLIBDIR)/newlib/libc/include/
+CROSS_CFLAGS += -EL -G 0
 CROSS_CFLAGS += -Os -g -fno-pic -mno-abicalls
 CROSS_CFLAGS += -fno-strict-aliasing -fno-common -fomit-frame-pointer -G 0
 CROSS_CFLAGS += -pipe -mlong-calls
@@ -14,10 +15,10 @@ libcfe.a : $(OBJS)
 	mips-ar rs libcfe.a $(OBJS)
 
 .S.o:
-	mips-cc -O2 $(CROSS_CFLAGS) -c $<
+	mips-gcc -O2 $(CROSS_CFLAGS) -c $<
 
 .c.o:
-	mips-cc -O2 $(CROSS_CFLAGS) -c $<
+	mips-gcc -O2 $(CROSS_CFLAGS) -c $<
 
 clean :
 	rm -rf $(OBJS)
