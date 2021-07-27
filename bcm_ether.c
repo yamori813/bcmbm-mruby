@@ -6,6 +6,7 @@
 
 #include "lwip/debug.h"
 
+#include "lwip/ethip6.h"
 #include "lwip/etharp.h"
 #include "netif/ethernet.h"
 
@@ -78,6 +79,7 @@ char *macptr;
 	netif->name[1] = 'e';
 
 	netif->output = etharp_output;
+	netif->output_ip6 = ethip6_output;
 	netif->linkoutput = low_level_output;
 
 	macptr = nvram_get("et0macaddr");

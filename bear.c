@@ -23,7 +23,10 @@
  */
 
 #include "bearssl.h"
-//#include "system.h"
+
+#if defined(RTL8196) || defined(RTL8196E)
+#include "system.h"
+#endif
 
 /*
  * Low-level data read callback for the simplified SSL I/O API.
@@ -282,9 +285,9 @@ https_close()
 extern int tcpstat;
 
 int
-https_connect(char *host, int addr, int port, char *header)
+https_connect(char *host, int *addr, int port, char *header, int type)
 {
-	tcphttp_raw_init(addr, port);
+	tcphttp_raw_init(addr, port, type);
 	while(tcpstat == 0)
 		delay_ms(10);
 	if (tcpstat == 1) {
@@ -292,4 +295,15 @@ https_connect(char *host, int addr, int port, char *header)
 		return 1;
 	}
 	return 0;
+}
+
+void mksha256(unsigned char *data, int len, char *out)
+{
+br_sha256_context sc;
+
+	br_sha256_init(&sc);
+
+	br_sha256_update(&sc, data, len);
+
+	br_sha256_out(&sc, out);
 }

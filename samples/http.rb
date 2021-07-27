@@ -2,17 +2,9 @@ begin
 
 yabm = YABM.new
 
-addr = "10.0.1.140"
-mask = "255.255.255.0"
-gw = "10.0.1.1"
-dns = "10.0.1.1"
-ntpaddr = "10.0.1.18"
-
-yabm.netstart(addr, mask, gw, dns)
+yabm.netstartdhcp
 
 yabm.print "HTTP Test on BCM/mips" + "\r\n"
-
-yabm.sntp(ntpaddr)
 
 host = "httpbin.org"
 

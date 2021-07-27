@@ -2,7 +2,7 @@
  * Copyright (c) 2018 Hiroki Mori. All rights reserved.
  */
 
-#include <string.h>
+#include <sys/cdefs.h>
 
 #include "lwip/init.h"
 
@@ -23,16 +23,20 @@
 #include "lwip/dns.h"
 #include "lwip/dhcp.h"
 
+#if defined(RTL8196) || defined(RTL8196E)
+#include "system.h"
+#endif
+
 //#define	NETDEBUG
 
 unsigned char debug_flags;
 
-extern  struct netif netif;
+extern struct netif netif;
+
+static ip_addr_t ipaddr, netmask, gw, dnsserver;
 
 err_t ethernetif_init(struct netif *netif);
 err_t ethernet_input(struct pbuf *p, struct netif *netif);
-
-ip4_addr_t ipaddr, netmask, gw, dnsserver, dnsres;
 
 static struct udp_pcb *udpecho_raw_pcb;
 static struct udp_pcb *udpsntp_raw_pcb;
@@ -121,20 +125,29 @@ my_tcp_close()
 }
 
 void
-tcphttp_raw_init(int disaddr, int disport)
+tcphttp_raw_init(int *addr, int disport, int type)
 {
-static ip4_addr_t addr;
+static ip_addr_t distaddr;
 
-  ip4_addr_set_u32(&addr, lwip_htonl(disaddr));
+  if (type == 0) {
+    ip_addr_set_ip4_u32(&distaddr, *addr);
+    tcphttp_raw_pcb = tcp_new_ip_type(IPADDR_TYPE_ANY);
+  } else {
+    distaddr.u_addr.ip6.addr[0] = lwip_htonl((addr[0] << 16) | addr[1]) ;
+    distaddr.u_addr.ip6.addr[1] = lwip_htonl((addr[2] << 16) | addr[3]) ;
+    distaddr.u_addr.ip6.addr[2] = lwip_htonl((addr[4] << 16) | addr[5]) ;
+    distaddr.u_addr.ip6.addr[3] = lwip_htonl((addr[6] << 16) | addr[7]) ;
+    distaddr.type = IPADDR_TYPE_V6;
+    tcphttp_raw_pcb = tcp_new_ip_type(IPADDR_TYPE_V6);
+  }
 
-  tcphttp_raw_pcb = tcp_new();
   if (tcphttp_raw_pcb != NULL) {
 //    tcp_arg(tcphttp_raw_pcb, NULL);
     tcp_recv(tcphttp_raw_pcb, http_recv);
     tcp_sent(tcphttp_raw_pcb, http_sent);
     tcp_err(tcphttp_raw_pcb, http_err);
     tcp_poll(tcphttp_raw_pcb, http_poll, 60);
-    tcp_connect(tcphttp_raw_pcb, &addr, disport, http_connected);
+    tcp_connect(tcphttp_raw_pcb, &distaddr, disport, http_connected);
     tcpstat = 0;
   }
 }
@@ -151,7 +164,7 @@ void net_poll()
 }
 
 int dnsstat;
-int resolvip;
+ip_addr_t resolvip;
 
 static void
 dns_found(const char* hostname, const ip_addr_t *ipaddr, void *arg)
@@ -159,16 +172,40 @@ dns_found(const char* hostname, const ip_addr_t *ipaddr, void *arg)
   LWIP_UNUSED_ARG(arg);
 
   if (ipaddr != 0) {
-    resolvip = ip_addr_get_ip4_u32(ipaddr);
+    resolvip = *ipaddr;
     dnsstat = 1;
   } else {
     dnsstat = 2;
   }
 }
 
+void net_start(int myaddr, int mymask, int mygw, int mydns)
+{
+	ip_addr_set_ip4_u32(&ipaddr, myaddr);
+	ip_addr_set_ip4_u32(&netmask, mymask);
+	ip_addr_set_ip4_u32(&gw, mygw);
+	ip_addr_set_ip4_u32(&dnsserver, mydns);
+
+	net_init(0);
+}
+
+void net_startdhcp()
+{
+	IP_ADDR4(&ipaddr, 0,0,0,0);
+	IP_ADDR4(&netmask, 0,0,0,0);
+	IP_ADDR4(&gw, 0,0,0,0);
+
+	net_init(1);
+}
+
+int getmyaddress()
+{
+
+	return netif_ip4_addr(&netif);
+}
+
 void net_init(int use_dhcp)
 {
-long *lptr;
 err_t err;
 int i;
 
@@ -180,6 +217,9 @@ int i;
 	else
 		netif_add(&netif, &ipaddr, &netmask, &gw, NULL, ethernetif_init,
  		    ethernet_input);
+
+	netif_create_ip6_linklocal_address(&netif, 1);
+	netif.ip6_autoconfig_enabled = 1;
 
 	netif_set_link_up(&netif);
 
@@ -199,13 +239,15 @@ int i;
 				if (dhcp_supplied_address(&netif))
 					break;
 			}
-			if (netif.ip_addr.addr != 0) {
+			if (netif_ip4_addr(&netif) != 0) {
 #ifdef NETDEBUG
+				unsigned int ip4;
+				ip4 = netif_ip4_addr(&netif);
 				xprintf("IP address : %d.%d.%d.%d\n",
-				    (netif.ip_addr.addr >> 24) & 0xff,
-				    (netif.ip_addr.addr >> 16) & 0xff,
-				    (netif.ip_addr.addr >> 8) & 0xff,
-				    netif.ip_addr.addr & 0xff);
+				    (ip4 >> 24) & 0xff,
+				    (ip4 >> 16) & 0xff,
+				    (ip4 >> 8) & 0xff,
+				    ip4 & 0xff);
 #endif
 			} else {
 				print("dhcp can't get address\n");
@@ -215,32 +257,28 @@ int i;
 	} else {
 		dns_setserver(0, &dnsserver);
 	}
+#ifdef NETDEBUG
+	xprintf("%x:%x:%x:%x:%x:%x:%x:%x ",
+	    IP6_ADDR_BLOCK1(netif_ip6_addr(&netif, 0)),
+	    IP6_ADDR_BLOCK2(netif_ip6_addr(&netif, 0)),
+	    IP6_ADDR_BLOCK3(netif_ip6_addr(&netif, 0)),
+	    IP6_ADDR_BLOCK4(netif_ip6_addr(&netif, 0)),
+	    IP6_ADDR_BLOCK5(netif_ip6_addr(&netif, 0)),
+	    IP6_ADDR_BLOCK6(netif_ip6_addr(&netif, 0)),
+	    IP6_ADDR_BLOCK7(netif_ip6_addr(&netif, 0)),
+	    IP6_ADDR_BLOCK8(netif_ip6_addr(&netif, 0)));
+	xprintf("%x:%x:%x:%x:%x:%x:%x:%x ",
+	    IP6_ADDR_BLOCK1(netif_ip6_addr(&netif, 1)),
+	    IP6_ADDR_BLOCK2(netif_ip6_addr(&netif, 1)),
+	    IP6_ADDR_BLOCK3(netif_ip6_addr(&netif, 1)),
+	    IP6_ADDR_BLOCK4(netif_ip6_addr(&netif, 1)),
+	    IP6_ADDR_BLOCK5(netif_ip6_addr(&netif, 1)),
+	    IP6_ADDR_BLOCK6(netif_ip6_addr(&netif, 1)),
+	    IP6_ADDR_BLOCK7(netif_ip6_addr(&netif, 1)),
+	    IP6_ADDR_BLOCK8(netif_ip6_addr(&netif, 1)));
+#endif
 
 	udpsntp_raw_pcb = NULL;
-}
-
-void net_start(int myaddr, int mymask, int mygw, int mydns)
-{
-	ip4_addr_set_u32(&ipaddr, lwip_htonl(myaddr));
-	ip4_addr_set_u32(&netmask, lwip_htonl(mymask));
-	ip4_addr_set_u32(&gw, lwip_htonl(mygw));
-	ip4_addr_set_u32(&dnsserver, lwip_htonl(mydns));
-
-	net_init(0);
-}
-
-void net_startdhcp()
-{
-	IP4_ADDR(&ipaddr, 0,0,0,0);
-	IP4_ADDR(&netmask, 0,0,0,0);
-	IP4_ADDR(&gw, 0,0,0,0);
-
-	net_init(1);
-}
-
-int getmyaddress()
-{
-	return lwip_htonl(netif.ip_addr.addr);
 }
 
 void
@@ -291,7 +329,7 @@ rtl_udp_send(int addr, int port, char *buf, int len)
 static ip4_addr_t distaddr;
 
 	if (udpecho_raw_pcb != NULL) {
-		ip4_addr_set_u32(&distaddr, lwip_htonl(addr));
+		ip4_addr_set_u32(&distaddr, addr);
 		struct pbuf* b = pbuf_alloc(PBUF_TRANSPORT, len, PBUF_POOL);
 		memcpy(b->payload, buf, len);
 // UDP send must be live gateway. Because of gateware arp resolve at UDP send
@@ -333,50 +371,79 @@ unsigned char buf[48];
 	}
 }
 
-void sntp(int addr)
+void sntp(int *addr, int type)
 {
 int port;
-static ip4_addr_t distaddr;
+static ip_addr_t distaddr;
 
 	if (udpsntp_raw_pcb != NULL) {
 		udp_remove(udpsntp_raw_pcb);
 	}
 
 	port = 123;
-	udpsntp_raw_pcb = udp_new_ip_type(IPADDR_TYPE_ANY);
-	udp_bind(udpsntp_raw_pcb, IP_ANY_TYPE, port);
+	if (type == 0) {
+		udpsntp_raw_pcb = udp_new_ip_type(IPADDR_TYPE_ANY);
+		udp_bind(udpsntp_raw_pcb, IP_ANY_TYPE, port);
+		ip_addr_set_ip4_u32(&distaddr, *addr);
+	} else {
+		udpsntp_raw_pcb = udp_new_ip_type(IPADDR_TYPE_V6);
+		udp_bind(udpsntp_raw_pcb, netif_ip6_addr(&netif, 1), port);
+		distaddr.u_addr.ip6.addr[0] = lwip_htonl((addr[0] << 16) | addr[1]) ;
+		distaddr.u_addr.ip6.addr[1] = lwip_htonl((addr[2] << 16) | addr[3]) ;
+		distaddr.u_addr.ip6.addr[2] = lwip_htonl((addr[4] << 16) | addr[5]) ;
+		distaddr.u_addr.ip6.addr[3] = lwip_htonl((addr[6] << 16) | addr[7]) ;
+		distaddr.type = IPADDR_TYPE_V6;
+	}
 	udp_recv(udpsntp_raw_pcb, udpsntp_raw_recv, NULL);
 
 	unsigned char msg[48]={0,0,0,0,0,0,0,0,0};
 
 	msg[0] = 4 << 3 | 3;
 
-	ip4_addr_set_u32(&distaddr, lwip_htonl(addr));
 	struct pbuf* b = pbuf_alloc(PBUF_TRANSPORT, sizeof(msg), PBUF_POOL);
 	memcpy(b->payload, msg, sizeof(msg));
 	udp_sendto(udpsntp_raw_pcb, b, &distaddr, port);
 	pbuf_free(b);
 }
 
+void cpip6addr(ip_addr_t *addr, int *dst)
+{
+	dst[0] = IP6_ADDR_BLOCK1((ip6_addr_t *)addr);
+	dst[1] = IP6_ADDR_BLOCK2((ip6_addr_t *)addr);
+	dst[2] = IP6_ADDR_BLOCK3((ip6_addr_t *)addr);
+	dst[3] = IP6_ADDR_BLOCK4((ip6_addr_t *)addr);
+	dst[4] = IP6_ADDR_BLOCK5((ip6_addr_t *)addr);
+	dst[5] = IP6_ADDR_BLOCK6((ip6_addr_t *)addr);
+	dst[6] = IP6_ADDR_BLOCK7((ip6_addr_t *)addr);
+	dst[7] = IP6_ADDR_BLOCK8((ip6_addr_t *)addr);
+}
+
 int
-lookup(char *host, int *addr)
+lookup(char *host, int *addr, int type)
 {
 err_t err;
 int res;
+ip_addr_t dnsres;
 
 	res = 0;
 	*addr = 0;
 	dnsstat = 0;
-	err = dns_gethostbyname(host,
-	    &dnsres, dns_found, NULL);
+	err = dns_gethostbyname_addrtype(host,
+	    &dnsres, dns_found, NULL, type);
 	if (err == ERR_OK) {
-		*addr = lwip_htonl(ip_addr_get_ip4_u32(&dnsres));
+		if (type == 0)
+			*addr = ip_addr_get_ip4_u32(&dnsres);
+		else
+			cpip6addr(&dnsres, addr);
 		res = 1;
 	} else {
 		while(dnsstat == 0)
 			delay_ms(10);
 		if (dnsstat == 1) {
-			*addr = lwip_htonl(resolvip);
+			if (type == 0)
+				*addr = ip_addr_get_ip4_u32(&resolvip);
+			else
+				cpip6addr(&resolvip, addr);
 			res = 1;
 		}
 	}
@@ -384,9 +451,9 @@ int res;
 }
 
 int
-http_connect(int addr, int port, char *header)
+http_connect(int *addr, int port, char *header, int type)
 {
-        tcphttp_raw_init(addr, port);
+        tcphttp_raw_init(addr, port, type);
         while(tcpstat == 0)
                 delay_ms(10);
         if (tcpstat == 1) {

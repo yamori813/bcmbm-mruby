@@ -109,6 +109,8 @@ int bootsize;
 cfe_fwinfo_t fwinfo;
 int tomem;
 int sp;
+unsigned char hash[32];
+int i;
 
 	cfe_init(handle,ept);
 
@@ -147,10 +149,16 @@ int sp;
 	mrbp = 0xa0000000 + 0x1C000000 + bootsize + vmsize;
 	if (*(mrbp + 0) == 0x52 && *(mrbp + 1) == 0x49 &&
 	    *(mrbp + 2) == 0x54 && *(mrbp + 3) == 0x45) {
-		mrbsize = *(mrbp + 0xa) << 24 | *(mrbp + 0xb) << 16 |
-		    *(mrbp + 0xc) << 8 | *(mrbp + 0xd);
+		mrbsize = *(mrbp + 0x8) << 24 | *(mrbp + 0x9) << 16 |
+		    *(mrbp + 0xa) << 8 | *(mrbp + 0xb);
+		xprintf("MRB SIZE %d\n", mrbsize);
 		mrbbuf = malloc(mrbsize);
 		memcpy(mrbbuf, mrbp, mrbsize);
+		mksha256(mrbbuf, mrbsize, hash);
+		xprintf("MRB SHA256 ");
+		for (i = 0; i < 32; ++i)
+			xprintf("%02x", hash[i]);
+		xprintf("\n");
 
 		mrb_state *mrb;
 		mrb = mrb_open();

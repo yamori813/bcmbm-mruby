@@ -2,12 +2,7 @@ begin
 
 yabm = YABM.new
 
-addr = "10.0.1.140"
-mask = "255.255.255.0"
-gw = "10.0.1.1"
-dns = "10.0.1.1"
-
-yabm.netstart(addr, mask, gw, dns)
+yabm.netstartdhcp
 
 yabm.print "Hello Bear Metal mruby on BCM/mips"
 

@@ -1243,7 +1243,7 @@ bcm4401_hwinit(bcm4401_softc *sc)
 	/* Modify Ethernet RX MAC settings (probably obsolete). */
 	WRITECSR(sc, R_EMAC_XMT_MAX_BURST, 32);
 	WRITECSR(sc, R_EMAC_RCV_MAX_BURST, 32);
-#if 0
+#if 1
 	WRITECSR(sc, R_RCV_CONFIG, M_RCFG_AM);   /* All multicast */
 #else
 	WRITECSR(sc, R_RCV_CONFIG, 0);

@@ -454,4 +454,9 @@ unsigned long genrand_int32(void);
 
 #define LWIP_NO_CTYPE_H 1
 
+#define LWIP_IPV4	1
+#define LWIP_IPV6	1
+// This is ping workarond. Bug ?
+#define LWIP_IPV6_MLD	0
+
 #endif /* LWIP_LWIPOPTS_H */
