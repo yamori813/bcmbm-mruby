@@ -2,8 +2,6 @@
 # bcmbm-mruby Makefile
 #
 
-TOOLCHAIN=../hndtools-mipsel-linux-uclibc-4.2.3
-
 NEWLIBDIR=newlib-3.0.0.20180831
 LWIPDIR=lwip-2.1.2
 BARESSLDIR=bearssl-0.6
