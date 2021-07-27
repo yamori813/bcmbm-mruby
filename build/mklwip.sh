@@ -10,9 +10,9 @@ unzip ${LWIP}.zip
 
 START=`date '+%s'`
 
-cp -r ../lwip ${LWIP}/broadcom
+cp -r ../lwip ${LWIP}/mips4kel
 
-cd ${LWIP}/broadcom;make
+cd ${LWIP}/mips4kel;make
 
 END=`date '+%s'`
 

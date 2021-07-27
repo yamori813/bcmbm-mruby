@@ -14,7 +14,7 @@ CROSS_LDFLAGS = -static -EL
 CROSS_LIBS = -Lbuild/work/$(NEWLIBDIR)/mips/el/newlib/
 CROSS_LIBS += -L/usr/local/lib/gcc/mips/4.9.2/el/
 CROSS_LIBS += -Lmruby/build/broadcom/lib/
-CROSS_LIBS += -Lbuild/work/$(LWIPDIR)/broadcom/
+CROSS_LIBS += -Lbuild/work/$(LWIPDIR)/mips4kel/
 CROSS_LIBS += -Lbuild/work/$(BARESSLDIR)/build/
 CROSS_LIBS += -L./cfe/
 CROSS_LIBS += -lmruby -llwip -lbearssl -lcfe -lc -lgcc
@@ -22,7 +22,7 @@ CROSS_LIBS += -lmruby -llwip -lbearssl -lcfe -lc -lgcc
 CROSS_CFLAGS = -Ibuild/work/$(NEWLIBDIR)/newlib/libc/include/
 CROSS_CFLAGS += -I./mruby/include
 CROSS_CFLAGS += -Ibuild/work/$(LWIPDIR)/src/include
-CROSS_CFLAGS += -Ibuild/work/$(LWIPDIR)/broadcom/include
+CROSS_CFLAGS += -Ibuild/work/$(LWIPDIR)/mips4kel/include
 CROSS_CFLAGS += -Ibuild/work/$(BARESSLDIR)/inc
 CROSS_CFLAGS += -EL -G 0
 CROSS_CFLAGS +=  -march=mips32 -Os -g -fno-pic -mno-abicalls
