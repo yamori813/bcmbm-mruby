@@ -26,11 +26,10 @@ yabm.print ipv6test + "\r\n"
 
 count = 0
 interval = 20
-times = 3
 
-yabm.watchdogstart(256)
+yabm.watchdogstart(100)
 
-while count < times do
+while 1 do
   count = count + 1
   yabm.print count.to_s
   res = SimpleHttp.new("https", "v6.ipv6-test.com", 443, 1).request("GET", "/api/myip.php", {'User-Agent' => "test-agent"})
