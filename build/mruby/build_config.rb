@@ -14,7 +14,8 @@ end
 MRuby::CrossBuild.new('broadcom') do |conf|
   toolchain :gcc
   conf.cc.command = 'mips-gcc'
-  conf.archiver.command = 'mips-ar'
+#  conf.archiver.command = 'mips-ar'
+  conf.archiver.command = 'mips-unknown-freebsd13.0-ar'
 
   cc.defines << %w(MRB_METHOD_T_STRUCT)
   cc.defines << %w(MRB_DISABLE_STDIO)

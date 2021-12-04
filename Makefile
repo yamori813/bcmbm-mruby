@@ -7,6 +7,7 @@ LWIPDIR=lwip-2.1.2
 BARESSLDIR=bearssl-0.6
 
 CROSS=mips
+CROSSBU=mips-unknown-freebsd13.0
 
 CROSS_LDFLAGS = -static -EL
 CROSS_LIBS = -Lbuild/work/$(NEWLIBDIR)/mips/el/newlib/
@@ -39,12 +40,12 @@ RBSCRIPT = samples/hello.rb
 main.bin.gz : $(OBJS) cfe/libcfe.a
 	./ver.sh
 	$(CROSS)-gcc $(CROSS_CFLAGS) -c ver.c
-	$(CROSS)-ld $(CROSS_LDFLAGS) -T main.ld -o main.elf $(OBJS) ver.o $(CROSS_LIBS)
-	$(CROSS)-objcopy -O binary main.elf main.bin
+	$(CROSSBU)-ld $(CROSS_LDFLAGS) -T main.ld -o main.elf $(OBJS) ver.o $(CROSS_LIBS)
+	$(CROSSBU)-objcopy -O binary main.elf main.bin
 	gzip -f --best main.bin
 
 start.o : start.S
-	$(CROSS)-as -EL -o start.o start.S
+	$(CROSSBU)-as -EL -o start.o start.S
 
 .c.o:
 	$(CROSS)-gcc -O2 $(CROSS_CFLAGS) -c $<

@@ -12,7 +12,7 @@ START=`date '+%s'`
 
 cp -r ../lwip ${LWIP}/mips4kel
 
-cd ${LWIP}/mips4kel;make
+cd ${LWIP}/mips4kel;make AR=mips-unknown-freebsd13.0-ar
 
 END=`date '+%s'`
 
