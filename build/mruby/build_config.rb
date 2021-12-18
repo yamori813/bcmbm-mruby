@@ -22,7 +22,7 @@ MRuby::CrossBuild.new('broadcom') do |conf|
   cc.defines << %w(MRB_DISABLE_STDIO)
   cc.defines << %w(MRB_WITHOUT_FLOAT)
   cc.defines << %w(YABM_BROADCOM)
-  conf.cc.flags << "-EL -G 0"
+  conf.cc.flags << "-march=mips32 -EL -G 0"
   conf.cc.flags << "-fno-pic -mno-abicalls"
 # for debug
 #  conf.cc.flags << "-O0 -g3 -fno-pic -mno-abicalls"

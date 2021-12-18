@@ -1,11 +1,11 @@
 NEWLIBDIR=newlib-3.0.0.20180831
 
 CROSS_CFLAGS = -I../build/work/$(NEWLIBDIR)/newlib/libc/include/
-CROSS_CFLAGS += -EL -G 0
+CROSS_CFLAGS += -march=mips32 -EL -G 0
 CROSS_CFLAGS += -Os -g -fno-pic -mno-abicalls
-CROSS_CFLAGS += -fno-strict-aliasing -fno-common -fomit-frame-pointer -G 0
+CROSS_CFLAGS += -fno-strict-aliasing -fno-common -fomit-frame-pointer
 CROSS_CFLAGS += -pipe -mlong-calls
-CROSS_CFLAGS += -DBCM47XX -DENDIAN_LITTLE=1 -DIPOLL=1 -march=mips32 -DCPUCFG_REGS32=1 -DCFG_INTERRUPTS=1 -DCFG_RUNFROMKSEG0=1 -DCFG_RELOC=1 -DCFE_API_ALL -DENDIAN_BIG=0
+CROSS_CFLAGS += -DBCM47XX -DENDIAN_LITTLE=1 -DIPOLL=1 -DCPUCFG_REGS32=1 -DCFG_INTERRUPTS=1 -DCFG_RUNFROMKSEG0=1 -DCFG_RELOC=1 -DCFE_API_ALL -DENDIAN_BIG=0
 
 CROSS=mips
 CROSSBU=mips-unknown-freebsd13.0

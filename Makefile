@@ -23,11 +23,11 @@ CROSS_CFLAGS += -I./mruby/include
 CROSS_CFLAGS += -Ibuild/work/$(LWIPDIR)/src/include
 CROSS_CFLAGS += -Ibuild/work/$(LWIPDIR)/mips4kel/include
 CROSS_CFLAGS += -Ibuild/work/$(BARESSLDIR)/inc
-CROSS_CFLAGS += -EL -G 0
-CROSS_CFLAGS +=  -march=mips32 -Os -g -fno-pic -mno-abicalls
-CROSS_CFLAGS += -fno-strict-aliasing -fno-common -fomit-frame-pointer -G 0
+CROSS_CFLAGS += -march=mips32 -EL -G 0
+CROSS_CFLAGS += -Os -g -fno-pic -mno-abicalls
+CROSS_CFLAGS += -fno-strict-aliasing -fno-common -fomit-frame-pointer
 CROSS_CFLAGS += -pipe -mlong-calls
-CROSS_CFLAGS += -DUSE_INQUEUE=1 -mips32
+CROSS_CFLAGS += -DUSE_INQUEUE=1
 
 OBJS = start.o main.o syscalls.o
 OBJS += bcm_timer.o bcm_ether.o bcm_gpio.o
