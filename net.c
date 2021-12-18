@@ -181,10 +181,10 @@ dns_found(const char* hostname, const ip_addr_t *ipaddr, void *arg)
 
 void net_start(int myaddr, int mymask, int mygw, int mydns)
 {
-	ip_addr_set_ip4_u32(&ipaddr, myaddr);
-	ip_addr_set_ip4_u32(&netmask, mymask);
-	ip_addr_set_ip4_u32(&gw, mygw);
-	ip_addr_set_ip4_u32(&dnsserver, mydns);
+	ip_addr_set_ip4_u32(&ipaddr, htonl(myaddr));
+	ip_addr_set_ip4_u32(&netmask, htonl(mymask));
+	ip_addr_set_ip4_u32(&gw, htonl(mygw));
+	ip_addr_set_ip4_u32(&dnsserver, htonl(mydns));
 
 	net_init(0);
 }
