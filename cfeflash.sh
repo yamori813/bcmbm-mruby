@@ -1,5 +1,7 @@
 #!/bin/sh
 
+if [ $# == 2 ]; then
+
 IP=$1
 FILE=$2
 
@@ -16,3 +18,6 @@ exit
 fi
 echo -n "."
 done
+else
+echo "cfeflash.sh <ip address> <trx file>"
+fi
