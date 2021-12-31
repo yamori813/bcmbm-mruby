@@ -2,10 +2,7 @@
 
 OS=`uname -s`
 
-
 NEWLIB=newlib-3.0.0.20180831
-
-PATH=${PATH}:${HOME}/bin
 
 cd work
 
