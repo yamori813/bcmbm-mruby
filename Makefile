@@ -27,7 +27,6 @@ CROSS_CFLAGS += -march=mips32 -EL -G 0
 CROSS_CFLAGS += -Os -g -fno-pic -mno-abicalls
 CROSS_CFLAGS += -fno-strict-aliasing -fno-common -fomit-frame-pointer
 CROSS_CFLAGS += -pipe -mlong-calls
-CROSS_CFLAGS += -DUSE_INQUEUE=1
 
 OBJS = start.o main.o syscalls.o
 OBJS += bcm_timer.o bcm_ether.o bcm_gpio.o

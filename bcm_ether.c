@@ -110,12 +110,5 @@ int i;
 		xprintf("%02x ", data[i+32]);
 	xprintf("\n");
 */
-#if USE_INQUEUE
 	eninque(p);
-#else
-	if (netif.input(p, &netif) != ERR_OK) {
-		pbuf_free(p);
-		p = NULL;
-	}
-#endif
 }
