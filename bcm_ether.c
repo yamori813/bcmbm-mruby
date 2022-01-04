@@ -21,7 +21,7 @@ struct ethernetif {
 
 extern int netstat;
 
-#define INQEULEN 16
+#define INQEULEN 32
  
 struct pbuf *inque[INQEULEN];
 int inquestart;
