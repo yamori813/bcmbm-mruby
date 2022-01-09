@@ -201,7 +201,6 @@ void net_startdhcp()
 int getmyaddress()
 {
 
-//	return *(int *)netif_ip4_addr(&netif);
 	return ntohl(*(int *)netif_ip4_addr(&netif));
 }
 
