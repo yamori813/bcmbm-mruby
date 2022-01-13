@@ -1,10 +1,12 @@
 #
-# yabmbm-mruby mruby script
+# mruby on yabm script
 # need compile with subroutine file
 #
 #
 
 APIKEY = "naisyo"
+
+WDTIMEOUT = 300
 
 #
 # main
@@ -32,7 +34,7 @@ yabm.sntp(ntpaddr)
 count = 0
 interval = 30
 
-yabm.watchdogstart(300)
+yabm.watchdogstart(WDTIMEOUT)
 
 while 1 do
   count = count + 1
