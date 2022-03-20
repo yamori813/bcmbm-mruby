@@ -7,7 +7,7 @@ mruby (git submodule)
 
 Build tools.  
 
-hndtools-mipsel-linux-uclibc-4.2.3  
+gcc 4.9.2
 
 I build on FreeBSD/amd64 11.2 used by linux emuration.  
 
