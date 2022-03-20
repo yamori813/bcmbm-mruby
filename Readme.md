@@ -30,7 +30,7 @@ Custom script build is this.
 Multi source comple is this. 
 
 ```
-% make image RBSCRIPT="main.rb sub.rb"
+% make image RBSCRIPT="sub.rb main.rb"
 ```
 
 Todo  
