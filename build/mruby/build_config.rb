@@ -20,7 +20,7 @@ MRuby::CrossBuild.new('broadcom') do |conf|
   cc.defines << %w(MRB_USE_ETEXT_RO_DATA_P)
   cc.defines << %w(MRB_METHOD_T_STRUCT)
   cc.defines << %w(MRB_DISABLE_STDIO)
-  cc.defines << %w(MRB_WITHOUT_FLOAT)
+  cc.defines << %w(MRB_NO_FLOAT)
   cc.defines << %w(YABM_BROADCOM)
   conf.cc.flags << "-march=mips32 -EL -G 0"
   conf.cc.flags << "-fno-pic -mno-abicalls"
