@@ -7,21 +7,31 @@ mruby (git submodule)
 
 Build tools.  
 
-gcc 4.9.2
+gcc 4.9.2 
 
-I build on FreeBSD/amd64 11.2 used by linux emuration.  
+I build on FreeBSD/amd64 13.0R. 
 
-Work on BCM4712, BCM53510, BCM5352, BCM5354.  
+Work on BCM4712, BCM5350, BCM5352, BCM5354. 
 
 Build cfe image.  
 
-% make image  
+```
+% make image
+```
 
 Defalte script is samples/hello.rb.  
 
 Custom script build is this.  
 
-% make image RBSCRIPT=myscript.rb  
+```
+% make image RBSCRIPT=myscript.rb
+```
+
+Multi source comple is this. 
+
+```
+% make image RBSCRIPT="main.rb sub.rb"
+```
 
 Todo  
 
