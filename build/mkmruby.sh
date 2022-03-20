@@ -4,6 +4,8 @@ CDIR=`pwd`
 
 START=`date '+%s'`
 
+rm -f mruby/build_config.rb.lock
+
 cd ../mruby
 
 rm -rf build
