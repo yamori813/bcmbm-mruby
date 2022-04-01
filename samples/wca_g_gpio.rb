@@ -29,7 +29,7 @@ leds = [LED10, LED2, LED6, LED11]
 while 1 do
   leds.each {|led|
 
-    yabm.print ledto_s + " "
+    yabm.print led.to_s + " "
     yabm.gpiosetdat(led)
     start = yabm.count() 
     while yabm.count() < start + 5000 do
