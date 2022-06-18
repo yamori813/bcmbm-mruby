@@ -13,18 +13,23 @@ yabm.gpiosetdir(0xff)
 
 while 1 do
 
-  yabm.print bit.to_s + " "
-  yabm.gpiosetdat(1 << bit)
+  yabm.print bit.to_s + ": "
+  5.times {
+    yabm.print "1"
+    yabm.gpiosetdat(1 << bit)
+    start = yabm.count()
+    while yabm.count() < start + 1000 do
+    end
+    yabm.print "0"
+    yabm.gpiosetdat(0)
+    start = yabm.count() 
+    while yabm.count() < start + 1000 do
+    end
+  }
   bit = bit + 1
   if bit == maxpin
     bit = 0
   end
-  6.times {
-    start = yabm.count() 
-    while yabm.count() < start + 1000 do
-    end
-    yabm.print "*"
-  }
   yabm.print "\r\n"
 end
 
