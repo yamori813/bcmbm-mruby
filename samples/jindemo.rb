@@ -3,10 +3,21 @@
 #
 #
 
+
 def delay(yabm, val) 
   start = yabm.count() 
   while yabm.count() < start + val do
   end
+end
+
+def ledon(yabm) 
+  dat = yabm.gpiogetdat
+  yabm.gpiosetdat(dat & ~(1 << 4))
+end
+
+def ledoff(yabm) 
+  dat = yabm.gpiogetdat
+  yabm.gpiosetdat(dat | (1 << 4))
 end
 
 begin
@@ -15,24 +26,29 @@ begin
 
 yabm = YABM.new
 
-interval = 0
+last = 0;
+count = 0
 
 yabm.gpiosetdat(1 << 3 | 1 << 4)
 
 while 1 do
-  yabm.print "."
   delay(yabm, 200)
-  if interval == 0 && yabm.gpiogetdat & 0x01 == 1
+  if last == 0 && yabm.gpiogetdat & 0x01 == 1
     yabm.print "*" 
-    yabm.gpiosetdat(1 << 3)
-    interval = 1
+    ledon yabm
+    last = 1
   end
-  if interval != 0
-    interval = interval + 1
+  if last == 1 && yabm.gpiogetdat & 0x01 == 0
+    ledoff yabm
+    last = 0
   end
-  if interval == 15
-    interval = 0
-    yabm.gpiosetdat(1 << 3 | 1 << 4)
+  if count % 5 == 0 then
+    dat = yabm.gpiogetdat
+    if dat & (1 << 5) == 0 then
+      yabm.gpiosetdat(dat | (1 << 5))
+    else
+      yabm.gpiosetdat(dat & ~(1 << 5))
+    end
   end
 end
 
