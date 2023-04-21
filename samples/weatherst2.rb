@@ -6,7 +6,7 @@
 
 APIKEY = "naisyo"
 
-NONET = false
+NONET = true
 
 # GPIO I2C Pin used SW3
 
