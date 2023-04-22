@@ -4,9 +4,11 @@ yabm = YABM.new
 
 yabm.netstartdhcp
 
-yabm.print "Hello Bear Metal mruby on BCM/mips"
+yabm.print "Hello Bear Metal mruby on BCM/mips\r\n"
 
 count = 1
+
+yabm.print yabm.getaddress + "\r\n"
 
 while 1 do
 
@@ -15,7 +17,11 @@ while 1 do
   s = SimpleHttp.new("http", "httpbin.org", 80)
   if s
     res = s.request("GET", "/ip", {'User-Agent' => "test-agent"})
-    yabm.print "GET done " + res.status.to_s + "\r\n"
+    if res.status.to_s == ""
+      yabm.print "ERROR\r\n"
+    else
+      yabm.print "GET done " + res.status.to_s + "\r\n"
+    end
   else
     yabm.print "SimpleHttp error\r\n"
   end
