@@ -2,8 +2,7 @@ begin
 
 yabm = YABM.new
 
-#pins = [0, 1, 2, 3, 4, 5, 6, 7]
-pins = [0, 1, 2, 3]
+pins = [0, 1, 2, 3, 4, 5, 6, 7]
 
 orgdir = yabm.gpiogetdir
 orgctl = yabm.gpiogetctl
