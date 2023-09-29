@@ -16,10 +16,7 @@ count = 0
 last = yabm.gpiogetdat
 
 while 1 do
-
-  start = yabm.count() 
-  while yabm.count() < start + 1000 do
-  end
+  yabm.msleep(100)
   val = yabm.gpiogetdat
   if val != last
     b = bit((val - last).abs)
