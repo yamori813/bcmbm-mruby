@@ -17,14 +17,10 @@ while 1 do
   5.times {
     yabm.print "1"
     yabm.gpiosetdat(1 << bit)
-    start = yabm.count()
-    while yabm.count() < start + 1000 do
-    end
+    yabm.msleep(1000)
     yabm.print "0"
     yabm.gpiosetdat(0)
-    start = yabm.count() 
-    while yabm.count() < start + 1000 do
-    end
+    yabm.msleep(1000)
   }
   bit = bit + 1
   if bit == maxpin
