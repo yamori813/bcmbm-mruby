@@ -3,13 +3,6 @@
 #
 #
 
-
-def delay(yabm, val) 
-  start = yabm.count() 
-  while yabm.count() < start + val do
-  end
-end
-
 def ledon(yabm) 
   dat = yabm.gpiogetdat
   yabm.gpiosetdat(dat & ~(1 << 4))
@@ -32,7 +25,7 @@ count = 0
 yabm.gpiosetdat(1 << 3 | 1 << 4)
 
 while 1 do
-  delay(yabm, 200)
+  yabm.msleep(200)
   if last == 0 && yabm.gpiogetdat & 0x01 == 1
     yabm.print "*" 
     ledon yabm
