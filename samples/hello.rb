@@ -8,11 +8,9 @@ yabm = YABM.new
 
 yabm.print "Hello Bear Metal mruby on YABM"
 
-while 1 do
+loop do
    yabm.print "."
-   start = yabm.count() 
-   while yabm.count() < start + 500 do
-   end
+   yabm.msleep 500
 end
 
 rescue => e
