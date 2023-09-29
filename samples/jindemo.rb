@@ -15,8 +15,6 @@ end
 
 begin
 
-# ip address setting
-
 yabm = YABM.new
 
 last = 0;
