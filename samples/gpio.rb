@@ -20,7 +20,7 @@ loop do
   val = yabm.gpiogetdat
   if val != last
     b = bit((val - last).abs)
-    yabm.print b.to_s + "\n"
+    yabm.print "change bit: " + b.to_s + "\r\n"
     last = val
   end
 end
