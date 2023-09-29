@@ -4,7 +4,7 @@ yabm = YABM.new
 
 count = 0
 
-while 1 do
+loop do
   yabm.msleep(1000)
   yabm.print "*"
   count = count + 1

@@ -15,7 +15,7 @@ count = 0
 
 last = yabm.gpiogetdat
 
-while 1 do
+loop do
   yabm.msleep(100)
   val = yabm.gpiogetdat
   if val != last
