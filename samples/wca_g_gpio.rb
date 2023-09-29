@@ -31,9 +31,7 @@ loop do
 
     yabm.print led.to_s + " "
     yabm.gpiosetdat(led)
-    start = yabm.count() 
-    while yabm.count() < start + 5000 do
-    end
+    yabm.msleep(5000)
     yabm.print "input: " + yabm.gpiogetdat.to_s
   }
   yabm.print "\r\n"
