@@ -2,10 +2,11 @@ begin
 
 yabm = YABM.new
 
-pins = [0, 1, 2, 3, 4, 5, 6, 7]
+#pins = [0, 1, 2, 3, 4, 5, 6, 7]
+pins = [0, 1, 2, 3]
 
-orgdir = yabm.gpiogetdir()
-orgctl = yabm.gpiogetctl()
+orgdir = yabm.gpiogetdir
+orgctl = yabm.gpiogetctl
 yabm.print "ORG DIR: " + orgdir.to_s + " CTL: " + orgctl.to_s + "\r\n"
 yabm.gpiosetdir(0xff)
 
