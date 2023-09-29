@@ -26,7 +26,7 @@ yabm.gpiosetdir(LED10 | LED2 | LED6 | LED11)
 
 leds = [LED10, LED2, LED6, LED11]
 
-while 1 do
+loop do
   leds.each {|led|
 
     yabm.print led.to_s + " "
