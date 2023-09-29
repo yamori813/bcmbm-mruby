@@ -5,10 +5,7 @@ yabm = YABM.new
 count = 0
 
 while 1 do
-
-  start = yabm.count() 
-  while yabm.count() < start + 1000 do
-  end
+  yabm.msleep(1000)
   yabm.print "*"
   count = count + 1
   if count % 10 == 0
