@@ -1,6 +1,6 @@
 def bit(val)
 bit = 0
-  while val != 0 do
+  while val != 0
     val = val >> 1
     bit = bit + 1
   end

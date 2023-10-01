@@ -22,7 +22,7 @@ count = 0
 
 yabm.gpiosetdat(1 << 3 | 1 << 4)
 
-while 1 do
+loop do
   yabm.msleep(200)
   if last == 0 && yabm.gpiogetdat & 0x01 == 1
     yabm.print "*" 

@@ -10,7 +10,7 @@ count = 1
 
 yabm.print yabm.getaddress + "\r\n"
 
-while 1 do
+loop do
 
   yabm.print "simple http " + count.to_s + "\r\n"
 
@@ -28,9 +28,7 @@ while 1 do
 
   count = count + 1
 
-  start = yabm.count() 
-  while yabm.count() < start + 5000 do
-  end
+  yabm.msleep 5_000
 end
 
 rescue => e

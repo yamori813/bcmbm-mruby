@@ -21,12 +21,6 @@ MPLADDR = 0x60
 
 # utility function
 
-def delay(yabm, val) 
-  start = yabm.count() 
-  while yabm.count() < start + val do
-  end
-end
-
 # This calculate code is based c source code in NXP AN3785 document
 
 def calculatePCompLong(padc, tadc, a0, b1, b2, c12)
@@ -131,16 +125,16 @@ yabm.print "c12 = " + c12.to_s + "\n"
 interval = 20
 count = 0
 
-while 1 do
+loop do
 
   reg = yabm.gpiogetdat
   yabm.gpiosetdat(reg & ~LED10)
 
-  while yabm.i2cchk(MPLADDR) == 0 do
-    delay(yabm, 1)
+  while yabm.i2cchk(MPLADDR) == 0
+    yabm.msleep(1)
   end
   yabm.i2cwrite(MPLADDR, 0x12, 0x01)
-  delay(yabm, 100)
+  yabm.msleep(100)
 
   padc = yabm.i2cread(MPLADDR, 0x00) << 8 | yabm.i2cread(MPLADDR, 0x01)
   tadc = yabm.i2cread(MPLADDR, 0x02) << 8 | yabm.i2cread(MPLADDR, 0x03)
@@ -167,7 +161,7 @@ while 1 do
   reg = yabm.gpiogetdat
   yabm.gpiosetdat(reg | LED10)
 
-  delay(yabm, 1000 * interval)
+  yabm.msleep(1000 * interval)
   count = count + 1
 end
 

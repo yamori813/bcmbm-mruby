@@ -22,12 +22,6 @@ SHTADDR = 0x44
 
 # utility function
 
-def delay(yabm, val)
-  start = yabm.count()
-  while yabm.count() < start + val do
-  end
-end
-
 def pointstr(p, c)
   if p == 0 then
     return "0." + "0" * c
@@ -67,22 +61,22 @@ class SHT3x
   end
   def getStatus
     @y.i2cwrite(SHTADDR, 0xf3, 0x2d)
-    delay(@y, 100)
+    @y.msleep(100)
     arr = @y.i2creads(SHTADDR, 3)
     return (arr[0] << 8) | arr[1]
   end
   def getCelsiusAndHumidity
-    while @y.i2cchk(SHTADDR) == 0 do
-      delay(@y, 1)
+    while @y.i2cchk(SHTADDR) == 0
+      @y.msleep(1)
     end
     @y.i2cwrite(SHTADDR, 0x24, 0x00)
-    delay(@y, 500)
-    while 1 do
+    @y.msleep(500)
+    while true
       arr = @y.i2creads(SHTADDR, 6)
       if arr then
         break
       end
-      delay(@y, 1)
+      @y.msleep(1)
     end
     t = ((arr[0] << 8) | arr[1]) * 17500 / 65535 - 4500
     h = ((arr[3] << 8) | arr[4]) * 10000 / 65535
@@ -93,8 +87,8 @@ end
 class MPL115
   def init yabm
     @y = yabm
-    while @y.i2cchk(MPLADDR) == 0 do
-      delay(@y, 1)
+    while @y.i2cchk(MPLADDR) == 0
+      @y.msleep(1)
     end
     @a0 = @y.i2cread(MPLADDR, 0x04) << 8 | @y.i2cread(MPLADDR, 0x05)
     @b1 = @y.i2cread(MPLADDR, 0x06) << 8 | @y.i2cread(MPLADDR, 0x07)
@@ -129,11 +123,11 @@ class MPL115
   end
 
   def readPressure
-    while @y.i2cchk(MPLADDR) == 0 do
-      delay(@y, 1)
+    while @y.i2cchk(MPLADDR) == 0
+      @y.msleep(1)
     end
     @y.i2cwrite(MPLADDR, 0x12, 0x01)
-    delay(@y, 10)
+    @y.msleep(10)
     padc = @y.i2cread(MPLADDR, 0x00) << 8 | @y.i2cread(MPLADDR, 0x01)
     tadc = @y.i2cread(MPLADDR, 0x02) << 8 | @y.i2cread(MPLADDR, 0x03)
 
@@ -175,7 +169,7 @@ lastmp = 0
 
 yabm.watchdogstart(300)
 
-while 1 do
+loop do
 
   error = 0
 
@@ -221,7 +215,7 @@ while 1 do
 
   yabm.watchdogreset
 
-  delay(yabm, 1000 * interval)
+  yabm.msleep(1000 * interval)
   count = count + 1
 end
 

@@ -18,9 +18,7 @@ yabm.print "Hello Bear Metal mruby on BCM/mips"
 yabm.udpinit
 10.times do |i|
   yabm.print "*"
-  start = yabm.count() 
-  while yabm.count() < start + 1000 do
-  end
+  yabm.msleep 1_000
 yabm.udpsend(dist, 514, "Hello", 5)
 end
 
@@ -30,12 +28,10 @@ end
 yabm.udpbind(7000)
 
 i = 0
-while 1 do
+loop do
   yabm.print "."
   udpstr = yabm.udprecv()
-  start = yabm.count() 
-  while yabm.count() < start + 1000 do
-  end
+  yabm.msleep 1_000
   if udpstr.length != 0 then
     yabm.print udpstr
     i = i + 1

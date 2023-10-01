@@ -24,9 +24,7 @@ gpioinit yabm
 ntpaddr = yabm.lookup("ntp.nict.jp")
 yabm.sntp(ntpaddr)
 
-#start = yabm.count()
-#while yabm.count() < start + 3 * 1000 do
-#end
+#yabm.msleep 3_000
 #ntpaddr6 = yabm.lookup6("ntp.nict.jp")
 #yabm.print ntpaddr6 + "\r\n"
 #yabm.sntp(ntpaddr6)
@@ -36,16 +34,14 @@ interval = 30
 
 yabm.watchdogstart(WDTIMEOUT)
 
-while 1 do
+loop do
   count = count + 1
   ledon yabm
   yabm.print count.to_s
   res = SimpleHttp.new("https", "api.thingspeak.com", 443).request("GET", "/update?api_key=" + APIKEY + "&field1=" + count.to_s, {'User-Agent' => "test-agent"})
   ledoff yabm
   yabm.print "." + "\r\n"
-  start = yabm.count()
-  while yabm.count() < start + interval * 1000 do
-  end
+  yabm.msleep interval * 1000
   yabm.watchdogreset
 end
 

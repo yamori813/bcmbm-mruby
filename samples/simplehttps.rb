@@ -14,7 +14,7 @@ yabm.print yabm.getaddress + "\r\n"
 ntpaddr = yabm.lookup("ntp.nict.jp")
 yabm.sntp(ntpaddr)
 
-while 1 do
+loop do
 
   yabm.print "simple https " + count.to_s + "\r\n"
 
@@ -32,9 +32,7 @@ while 1 do
 
   count = count + 1
 
-  start = yabm.count() 
-  while yabm.count() < start + 5000 do
-  end
+  yabm.msleep + 5_000
 end
 
 rescue => e

@@ -19,7 +19,7 @@ yabm.print host + ":" + ip + "\r\n"
 
 count = 1
 
-while 1 do
+loop do
 
   yabm.print "start https " + count.to_s + "\r\n"
 
@@ -30,9 +30,7 @@ while 1 do
 
   count = count + 1
 
-  start = yabm.count() 
-  while yabm.count() < start + 10000 do
-  end
+  yabm.msleep 10_000
 end
 
 rescue => e
