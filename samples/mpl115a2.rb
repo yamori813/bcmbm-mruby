@@ -162,7 +162,7 @@ loop do
   yabm.gpiosetdat(reg | LED10)
 
   yabm.msleep(1000 * interval)
-  count = count + 1
+  count += 1
 end
 
 rescue => e

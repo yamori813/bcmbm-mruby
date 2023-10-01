@@ -28,7 +28,7 @@ loop do
   res = yabm.https(host, ip, 443, head)
   yabm.print res
 
-  count = count + 1
+  count += 1
 
   yabm.msleep 10_000
 end

@@ -23,7 +23,7 @@ loop do
   res = yabm.http(ip, 80, head)
   yabm.print res
 
-  count = count + 1
+  count += 1
 
   yabm.msleep 10_000
 end

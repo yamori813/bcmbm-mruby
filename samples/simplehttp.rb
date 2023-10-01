@@ -26,7 +26,7 @@ loop do
     yabm.print "SimpleHttp error\r\n"
   end
 
-  count = count + 1
+  count += 1
 
   yabm.msleep 5_000
 end

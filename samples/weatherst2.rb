@@ -216,7 +216,7 @@ loop do
   yabm.watchdogreset
 
   yabm.msleep(1000 * interval)
-  count = count + 1
+  count += 1
 end
 
 rescue => e
