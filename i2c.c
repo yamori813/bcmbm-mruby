@@ -125,12 +125,8 @@ int i, res;
 	}
 	setdir(IN);
 	setscl(LOW);
-	/* Clock stretching */
-	setscldir(IN);
-	while (readscl() == 0)
-		DELAY;
+	DELAY;
 	setscl(HIGH);
-	setscldir(OUT);
 	for (i = 0;i < 1000; ++i) {
 		if (readsda() == LOW) {
 			res = 1;
@@ -158,7 +154,13 @@ unsigned char ch;
 
 	ch = 0;
 	setdir(IN);
-	for (i = 0; i < 8; ++i) {
+	/* Clock stretching */
+	setscldir(IN);
+	while (readscl() == 0)
+		DELAY;
+	ch |= readsda() << 7;
+	setscldir(OUT);
+	for (i = 1; i < 8; ++i) {
 		setscl(LOW);
 		DELAY;
 		setscl(HIGH);
