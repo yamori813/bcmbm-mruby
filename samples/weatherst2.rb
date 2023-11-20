@@ -62,7 +62,7 @@ class SHT3x
   def getStatus
     @y.i2cwrite(SHTADDR, 0xf3, 0x2d)
     @y.msleep(100)
-    arr = @y.i2creads(SHTADDR, 3)
+    arr = @y.i2cread(SHTADDR, 3)
     return (arr[0] << 8) | arr[1]
   end
   def getCelsiusAndHumidity
@@ -72,7 +72,7 @@ class SHT3x
     @y.i2cwrite(SHTADDR, 0x24, 0x00)
     @y.msleep(500)
     while true
-      arr = @y.i2creads(SHTADDR, 6)
+      arr = @y.i2cread(SHTADDR, 6)
       if arr then
         break
       end
@@ -90,10 +90,10 @@ class MPL115
     while @y.i2cchk(MPLADDR) == 0
       @y.msleep(1)
     end
-    @a0 = @y.i2cread(MPLADDR, 0x04) << 8 | @y.i2cread(MPLADDR, 0x05)
-    @b1 = @y.i2cread(MPLADDR, 0x06) << 8 | @y.i2cread(MPLADDR, 0x07)
-    @b2 = @y.i2cread(MPLADDR, 0x08) << 8 | @y.i2cread(MPLADDR, 0x09)
-    @c12 = @y.i2cread(MPLADDR, 0x0a) << 8 | @y.i2cread(MPLADDR, 0x0b)
+    @a0 = @y.i2cread(MPLADDR, 1, 0x04) << 8 | @y.i2cread(MPLADDR, 1, 0x05)
+    @b1 = @y.i2cread(MPLADDR, 1, 0x06) << 8 | @y.i2cread(MPLADDR, 1, 0x07)
+    @b2 = @y.i2cread(MPLADDR, 1, 0x08) << 8 | @y.i2cread(MPLADDR, 1, 0x09)
+    @c12 = @y.i2cread(MPLADDR, 1, 0x0a) << 8 | @y.i2cread(MPLADDR, 1, 0x0b)
   end
 
 # This calculate code is based c source code in NXP AN3785 document
@@ -128,8 +128,8 @@ class MPL115
     end
     @y.i2cwrite(MPLADDR, 0x12, 0x01)
     @y.msleep(10)
-    padc = @y.i2cread(MPLADDR, 0x00) << 8 | @y.i2cread(MPLADDR, 0x01)
-    tadc = @y.i2cread(MPLADDR, 0x02) << 8 | @y.i2cread(MPLADDR, 0x03)
+    padc = @y.i2cread(MPLADDR, 1, 0x00) << 8 | @y.i2cread(MPLADDR, 1, 0x01)
+    tadc = @y.i2cread(MPLADDR, 1, 0x02) << 8 | @y.i2cread(MPLADDR, 1, 0x03)
 
     pcomp = calculatePCompShort(padc, tadc, @a0, @b1, @b2, @c12)
     pressure = ((pcomp * 1041) >> 14) + 800

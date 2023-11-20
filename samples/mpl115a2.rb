@@ -112,10 +112,10 @@ end
 
 yabm.i2cinit(SCL, SDA, 1)
 
-a0 = yabm.i2cread(MPLADDR, 0x04) << 8 | yabm.i2cread(MPLADDR, 0x05)
-b1 = yabm.i2cread(MPLADDR, 0x06) << 8 | yabm.i2cread(MPLADDR, 0x07)
-b2 = yabm.i2cread(MPLADDR, 0x08) << 8 | yabm.i2cread(MPLADDR, 0x09)
-c12 = yabm.i2cread(MPLADDR, 0x0a) << 8 | yabm.i2cread(MPLADDR, 0x0b)
+a0 = yabm.i2cread(MPLADDR, 1, 0x04) << 8 | yabm.i2cread(MPLADDR, 1, 0x05)
+b1 = yabm.i2cread(MPLADDR, 1, 0x06) << 8 | yabm.i2cread(MPLADDR, 1, 0x07)
+b2 = yabm.i2cread(MPLADDR, 1, 0x08) << 8 | yabm.i2cread(MPLADDR, 1, 0x09)
+c12 = yabm.i2cread(MPLADDR, 1, 0x0a) << 8 | yabm.i2cread(MPLADDR, 1, 0x0b)
 
 yabm.print "a0 = " + a0.to_s + "\n"
 yabm.print "b1 = " + b1.to_s + "\n"
@@ -136,8 +136,8 @@ loop do
   yabm.i2cwrite(MPLADDR, 0x12, 0x01)
   yabm.msleep(100)
 
-  padc = yabm.i2cread(MPLADDR, 0x00) << 8 | yabm.i2cread(MPLADDR, 0x01)
-  tadc = yabm.i2cread(MPLADDR, 0x02) << 8 | yabm.i2cread(MPLADDR, 0x03)
+  padc = yabm.i2cread(MPLADDR, 1, 0x00) << 8 | yabm.i2cread(MPLADDR, 1, 0x01)
+  tadc = yabm.i2cread(MPLADDR, 1, 0x02) << 8 | yabm.i2cread(MPLADDR, 1, 0x03)
 
   pcomp = calculatePCompShort(padc, tadc, a0, b1, b2, c12)
 #  pcomp = calculatePCompLong(padc, tadc, a0, b1, b2, c12)
