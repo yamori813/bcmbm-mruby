@@ -50,7 +50,7 @@ start.o : start.S
 	$(CROSS)-gcc -O2 $(CROSS_CFLAGS) -c $<
 
 image :
-	./mruby/build/host/mrbc/bin/mrbc -ohoge.mrb $(RBSCRIPT)
+	./mruby/build/host/bin/mrbc -ohoge.mrb $(RBSCRIPT)
 	tools/asustrx -o main.trx main.bin.gz hoge.mrb
 
 clean:
