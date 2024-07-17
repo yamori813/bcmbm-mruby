@@ -51,6 +51,7 @@ start.o : start.S
 
 image :
 	./mruby/build/host/bin/mrbc -ohoge.mrb $(RBSCRIPT)
+	@sha256 hoge.mrb
 	tools/asustrx -o main.trx main.bin.gz hoge.mrb
 
 clean:
