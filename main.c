@@ -156,9 +156,7 @@ int i;
 		memcpy(mrbbuf, mrbp, mrbsize);
 		mksha256(mrbbuf, mrbsize, hash);
 		xprintf("MRB SHA256 ");
-/* Some time hangup long string output uart. This is very bad workaound. */
-//		for (i = 0; i < 32; ++i)
-		for (i = 0; i < 4; ++i)
+		for (i = 0; i < 32; ++i)
 			xprintf("%02x", hash[i]);
 		xprintf("\n");
 
