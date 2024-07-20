@@ -36,11 +36,8 @@ Multi source comple is this.
 Todo  
 
 2038 problem  
-real memory size  
 UART support  
 SPI flash support  
 Switch support  
-I2C support  
 USB Support  
-IPv6 support  
 etc.  
