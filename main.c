@@ -5,6 +5,7 @@
 #include <mruby.h>
 #include <mruby/string.h>
 #include <mruby/irep.h>
+#include <mruby/version.h>
 
 #include "xprintf.h"
 
@@ -120,7 +121,8 @@ int i;
 
 	xfunc_out=put;
 
-	print(version);
+	xprintf(version, MRUBY_RELEASE_MAJOR, MRUBY_RELEASE_MINOR,
+	    MRUBY_RELEASE_TEENY);
 
 	cfe_getfwinfo(&fwinfo);
 	tomem = fwinfo.fwi_totalmem;
