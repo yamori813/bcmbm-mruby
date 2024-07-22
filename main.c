@@ -5,7 +5,6 @@
 #include <mruby.h>
 #include <mruby/string.h>
 #include <mruby/irep.h>
-#include <mruby/version.h>
 
 #include "xprintf.h"
 
