@@ -47,6 +47,36 @@ int clk;
 	*(volatile char*)(regbase + 3) = 0x03;
 }
 
+int havech(int port)
+{
+	volatile char* lsr; // Line status register.
+
+	lsr = (volatile char*)0xb8000305;
+
+	if (port == 1)
+		lsr += 0x100;
+
+	return ((*lsr) & 1);
+}
+
+int getch(int port)
+{
+	volatile char* lsr; // Line status register.
+	volatile char* thr; // Transmitter holding register.
+
+	lsr = (volatile char*)0xb8000305;
+	thr = (volatile char*)0xb8000300;
+
+	if (port == 1) {
+		lsr += 0x100;
+		thr += 0x100;
+	}
+
+	while(!((*lsr) & 1)) ; // Wait until have char.
+
+	return *thr;
+}
+
 // put and put2 can't marge one function. It's now work. Why....
 
 void put2(unsigned char c)
