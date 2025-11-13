@@ -14,7 +14,7 @@ MRuby::CrossBuild.new('broadcom') do |conf|
 # for debug
 #  conf.cc.flags << "-O0 -g3 -fno-pic -mno-abicalls"
   conf.cc.flags << "-pipe -mlong-calls"
-  conf.cc.include_paths = ["#{root}/include", "../build/work/newlib-3.0.0.20180831/newlib/libc/include"]
+  conf.cc.include_paths = ["#{root}/include", "../newlib-3.0.0.20180831/newlib/libc/include"]
 
   conf.gem :github => 'yamori813/mruby-yabm'
   conf.gem :github => 'yamori813/mruby-simplehttp'

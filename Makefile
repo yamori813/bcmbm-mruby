@@ -5,6 +5,7 @@
 NEWLIBDIR=newlib-3.0.0.20180831
 LWIPDIR=lwip-2.1.2
 BARESSLDIR=bearssl-0.6
+MRUBYDIR=mruby
 
 CROSS=mips
 CROSSBU=mips-unknown-freebsd13.0
@@ -12,14 +13,14 @@ CROSSBU=mips-unknown-freebsd13.0
 CROSS_LDFLAGS = -static -EL
 CROSS_LIBS = -Lbuild/work/$(NEWLIBDIR)/mips/el/newlib/
 CROSS_LIBS += -L/usr/local/lib/gcc/mips/4.9.2/el/
-CROSS_LIBS += -Lmruby/build/broadcom/lib/
+CROSS_LIBS += -Lbuild/work/$(MRUBYDIR)/build/broadcom/lib/
 CROSS_LIBS += -Lbuild/work/$(LWIPDIR)/mips4kel/
 CROSS_LIBS += -Lbuild/work/$(BARESSLDIR)/build/
 CROSS_LIBS += -L./cfe/
 CROSS_LIBS += -lmruby -llwip -lbearssl -lcfe -lc -lgcc
 
 CROSS_CFLAGS = -Ibuild/work/$(NEWLIBDIR)/newlib/libc/include/
-CROSS_CFLAGS += -I./mruby/include
+CROSS_CFLAGS += -Ibuild/work/$(MRUBYDIR)/include
 CROSS_CFLAGS += -Ibuild/work/$(LWIPDIR)/src/include
 CROSS_CFLAGS += -Ibuild/work/$(LWIPDIR)/mips4kel/include
 CROSS_CFLAGS += -Ibuild/work/$(BARESSLDIR)/inc
@@ -50,7 +51,7 @@ start.o : start.S
 	$(CROSS)-gcc -O2 $(CROSS_CFLAGS) -c $<
 
 image :
-	./mruby/build/host/bin/mrbc -ohoge.mrb $(RBSCRIPT)
+	./build/work/mruby/build/host/bin/mrbc -ohoge.mrb $(RBSCRIPT)
 	@sha256 hoge.mrb
 	tools/asustrx -o main.trx main.bin.gz hoge.mrb
 
