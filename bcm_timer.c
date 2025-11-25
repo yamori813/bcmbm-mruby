@@ -88,7 +88,9 @@ void reset_counter()
 
 delay_ms(int ms)
 {
-	cfe_usleep(ms * 1000);
+int i;
+	for(i = 0; i < ms; ++i)
+		cfe_usleep(1000);
 }
 
 time_t
