@@ -51,7 +51,7 @@ start.o : start.S
 	$(CROSS)-gcc -O2 $(CROSS_CFLAGS) -c $<
 
 image :
-	./build/work/mruby/build/host/bin/mrbc -ohoge.mrb $(RBSCRIPT)
+	mrbc -ohoge.mrb $(RBSCRIPT)
 	@sha256 hoge.mrb
 	tools/asustrx -o main.trx main.bin.gz hoge.mrb
 
