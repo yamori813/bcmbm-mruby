@@ -8,9 +8,9 @@ FILE=$2
 OS=`uname`
 
 if [ ${OS} = "FreeBSD" ]; then
-OPT="-t 1 -c2"
+OPT="-t 1 -c 2"
 else
-OPT="-w 1 -c2"
+OPT="-w 1 -c 2"
 fi
 
 while [ 1 ]
