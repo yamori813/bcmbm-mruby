@@ -1,5 +1,7 @@
 #!/bin/sh
 
+MRUBYVER=4.0.0
+
 CDIR=`pwd`
 
 START=`date '+%s'`
@@ -12,7 +14,7 @@ if [ ! -d mruby ]; then
 
 mkdir mruby
 
-tar -zxf 3.4.0.tar.gz -C mruby --strip-components 1
+tar -zxf ${MRUBYVER}.tar.gz -C mruby --strip-components 1
 
 fi
 

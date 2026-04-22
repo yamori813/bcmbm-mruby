@@ -20,7 +20,8 @@ CROSS_LIBS += -L./cfe/
 CROSS_LIBS += -lmruby -llwip -lbearssl -lcfe -lc -lgcc
 
 CROSS_CFLAGS = -Ibuild/work/$(NEWLIBDIR)/newlib/libc/include/
-CROSS_CFLAGS += -Ibuild/work/$(MRUBYDIR)/include
+#CROSS_CFLAGS += -Ibuild/work/$(MRUBYDIR)/include
+CROSS_CFLAGS += -Ibuild/work/$(MRUBYDIR)/build/broadcom/include
 CROSS_CFLAGS += -Ibuild/work/$(LWIPDIR)/src/include
 CROSS_CFLAGS += -Ibuild/work/$(LWIPDIR)/mips4kel/include
 CROSS_CFLAGS += -Ibuild/work/$(BARESSLDIR)/inc
@@ -51,9 +52,14 @@ start.o : start.S
 	$(CROSS)-gcc -O2 $(CROSS_CFLAGS) -c $<
 
 image :
-	mrbc -ohoge.mrb $(RBSCRIPT)
+	build/work/mruby/build/host/bin/mrbc -ohoge.mrb $(RBSCRIPT)
 	@sha256 hoge.mrb
 	tools/asustrx -o main.trx main.bin.gz hoge.mrb
+
+preimage :
+	mrbc -ohoge.mrb $(RBSCRIPT)
+	@sha256 hoge.mrb
+	asustrx -o main.trx main.bin.gz hoge.mrb
 
 clean:
 	rm -rf main.elf $(OBJS) hoge.c ver.c
